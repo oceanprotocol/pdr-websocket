@@ -115,7 +115,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }));
 
     predValDataHolder.theFixedMessage = result;
-    console.log("newEpoch", result);
+    //console.log("newEpoch", result);
     io.emit("newEpoch", result);
   });
 };

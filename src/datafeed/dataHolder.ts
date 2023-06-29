@@ -21,14 +21,6 @@ class DataHolder<T, U> {
     this.data[key].push(item);
   }
 
-  public getItemsFromContractByCount(key: string, count: number): Array<T> {
-    return this.data[key].slice(-count);
-  }
-
-  public clearContractBeforeCount(key: string, count: number): void {
-    this.data[key] = this.data[key].slice(-count);
-  }
-
   public clearContract(key: string): void {
     this.data[key] = [];
   }
