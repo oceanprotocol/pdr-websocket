@@ -4,6 +4,8 @@ import { currentConfig, predictoorWallet } from "../../utils/appconstants";
 import { networkProvider } from "../../utils/networkProvider";
 import { getSubscriptionDetails } from "../../services/getSubscriptionDetails";
 import { initializeContracts } from "../../services/initializeContracts";
+import { calculatePredictionEpochs } from "../../utils/utils";
+import { getMultipleAggPredValsByEpoch } from "../../services/getMultipleAggPredValsByEpoch";
 
 export const initialData = async (
   req: Request,
@@ -36,10 +38,11 @@ export const initialData = async (
 
         let aggPredVal = null;
         if (isValid) {
-          aggPredVal = await predictorContract.getAggPredval(
-            BPE * (currentEpoch - 1),
-            predictoorWallet
-          );
+          const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE);
+          aggPredVal = await getMultipleAggPredValsByEpoch({
+            epochs: predictionEpochs,
+            contracts: [predictorContract],
+          });
         }
 
         return {

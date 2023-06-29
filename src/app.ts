@@ -8,6 +8,7 @@ import { errorHandler } from "./utils/errorHandler";
 import { providerListener } from "./datafeed/providerListener";
 import { corsCheck } from "./utils/corsCheck";
 import { v1router } from "./routes/v1";
+import { newSubscriberListener } from "./datafeed/newSubscriberListener";
 
 const app = express();
 corsCheck(app);
@@ -20,12 +21,8 @@ app.use(express.json());
 app.use("/api/v1", v1router);
 errorHandler(app);
 
-io.on("connection", (socket) => {
-  console.log(`Client connected: ${socket.id}`);
-
-  socket.on("disconnect", () => {
-    console.log(`Client disconnected: ${socket.id}`);
-  });
+newSubscriberListener({
+  io,
 });
 
 providerListener({
