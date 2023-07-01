@@ -27,10 +27,11 @@ export const getAllInterestingPredictionContracts = async (
     }
 
     const { data, errors } =
-      await graphqlClientInstance.query<TGetPredictContractsQueryResult>(
+      await graphqlClientInstance.queryWithRetry<TGetPredictContractsQueryResult>(
         getPredictContracts,
         variables,
-        subgraphURL
+        subgraphURL,
+        3000
       )
     const predictContracts = data?.predictContracts
 
