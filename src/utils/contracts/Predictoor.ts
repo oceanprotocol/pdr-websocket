@@ -209,7 +209,7 @@ class Predictoor {
           denom: denominator,
           confidence: confidence,
           dir: dir,
-          stake: denom?.toNumber(),
+          stake: denom?.toString(),
         };
       }
 

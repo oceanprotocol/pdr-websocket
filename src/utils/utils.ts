@@ -27,3 +27,12 @@ export const findContractMarketInConfig = (
       tokenPrediction.tokenName === tokenName &&
       tokenPrediction.pairName === pairName
   )?.exchange;
+
+export const calculatePredictionEpochs = (
+  currentEpoch: number,
+  BPE: number
+): number[] => [
+  BPE * (currentEpoch - 1),
+  BPE * currentEpoch,
+  BPE * (currentEpoch + 1),
+];
