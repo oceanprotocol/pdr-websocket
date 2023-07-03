@@ -1,33 +1,32 @@
-export const getFilteredOrdersQuery = `
-    query GetFilteredOrders($datatokens: [String], $userIds: [String]) {
-        orders(
-            where: {
-                datatoken_in: $datatokens,
-                consumer_in: $userIds
-            },
-            orderBy: createdTimestamp,
-            orderDirection: desc,
-            first: 1000
-        ) {
-            datatoken {
-                id
-            }
-            consumer {
-                id
-            }
-            createdTimestamp
-        }
+import gql from "graphql-tag";
+
+export const getFilteredOrdersQuery = gql`
+  query GetFilteredOrders($datatokens: [String], $userIds: [String]) {
+    orders(
+      where: { datatoken_in: $datatokens, consumer_in: $userIds }
+      orderBy: createdTimestamp
+      orderDirection: desc
+      first: 1000
+    ) {
+      datatoken {
+        id
+      }
+      consumer {
+        id
+      }
+      createdTimestamp
     }
-`
+  }
+`;
 
 export type TGetFilteredOrdersQueryResult = {
   orders: Array<{
     datatoken: {
-      id: string
-    }
+      id: string;
+    };
     consumer: {
-      id: string
-    }
-    createdTimestamp: number
-  }>
-}
+      id: string;
+    };
+    createdTimestamp: number;
+  }>;
+};
