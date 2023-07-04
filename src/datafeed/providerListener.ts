@@ -55,7 +55,9 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const BPE =
     await subscribedPredictoors[0]?.predictorContract.getBlocksPerEpoch();
 
+  console.log("provider", provider);
   provider.on("block", async (blockNumber) => {
+    console.log("blockNumber", blockNumber)
     const currentEpoch = Math.floor(blockNumber / BPE);
 
     const renewPredictoors = subscribedPredictoors.filter(
@@ -87,6 +89,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
 
     if (currentEpoch === latestEpoch) return;
 
+    console.log("currentEpoch Start", currentEpoch)
     latestEpoch = currentEpoch;
 
     const currentPredictorContracts = subscribedPredictoors.map(
@@ -115,7 +118,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }));
 
     predValDataHolder.theFixedMessage = result;
-    //console.log("newEpoch", result);
+    console.log("newEpoch", result);
     io.emit("newEpoch", result);
   });
 };

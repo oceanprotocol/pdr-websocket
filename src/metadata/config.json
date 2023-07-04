@@ -46,7 +46,7 @@
   "barge": {
     "chainId": "8996",
     "oceanAddress": "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
-    "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
+    "subgraph": "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,

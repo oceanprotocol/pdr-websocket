@@ -19,8 +19,14 @@ ARG NODE_ENV
 # Use the argument in the build script
 RUN if [ "$NODE_ENV" = "production" ]; then npm run build-production; else npm run build-dev; fi
 
+# Copy the shell script from your project directory to the docker image
+COPY ./start.sh ./start.sh
+
+# Make your script executable
+RUN chmod +x ./start.sh
+
 # Expose the port the app runs in
 EXPOSE 8888
 
-# If we're in development mode, start the server with nodemon, otherwise use node
-CMD if [ "$NODE_ENV" = "development" ]; then npm run start-dev; else npm start-production; fi
+# Run your script
+CMD ["./start.sh"]
