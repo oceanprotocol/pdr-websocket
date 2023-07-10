@@ -1,5 +1,3 @@
-import { Chain } from 'wagmi'
-
 export const oasis = {
   id: 23295,
   name: 'Oasis Sapphire Testnet',
@@ -23,7 +21,7 @@ export const oasis = {
       url: 'https://testnet.explorer.sapphire.oasis.dev'
     }
   }
-} as const satisfies Chain
+}
 
 export const ganache = {
   id: 8996,
@@ -48,4 +46,4 @@ export const ganache = {
       url: 'http://127.0.0.1:8545'
     }
   }
-} as const satisfies Chain
+}

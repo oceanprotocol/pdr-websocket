@@ -60,6 +60,27 @@ class GraphqlClient {
       }
     }
   }
+
+  async queryWithRetry<T = any>(
+    query: string,
+    variables: { [name: string]: any } = {},
+    endpoint?: string,
+    interval: number = 1000
+  ): Promise<GraphQLResponse<T>> {
+    while (true) {
+      try {
+        const result = await this.query(query, variables, endpoint);
+        return result;
+      } catch (error) {
+        if (error.message.includes("ECONNREFUSED")) {
+          console.log("Connection refused, retrying...");
+          await new Promise((resolve) => setTimeout(resolve, interval));
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
 }
 
 const graphqlClientInstance = new GraphqlClient(currentConfig.subgraph);
