@@ -1,4 +1,5 @@
-import { GraphQLResponse, graphqlClientInstance } from '../graphqlClient'
+import { ApolloQueryResult } from '@apollo/client'
+import { graphqlClientInstance } from '../graphqlClient'
 import {
   TGetFilteredOrdersQueryResult,
   getFilteredOrdersQuery
@@ -7,7 +8,7 @@ import {
 export const getFilteredOrders = async (
   datatokenId: string,
   userId: string
-): Promise<GraphQLResponse<TGetFilteredOrdersQueryResult>> => {
+): Promise<ApolloQueryResult<TGetFilteredOrdersQueryResult>> => {
   return graphqlClientInstance.query<TGetFilteredOrdersQueryResult>(
     getFilteredOrdersQuery,
     {

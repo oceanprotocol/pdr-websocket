@@ -15,11 +15,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apollo/client": "^3.7.16",
     "cors": "^2.8.5",
+    "cross-fetch": "^3.1.8",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
     "express": "^4.18.2",
-    "node-fetch": "^2.6.7",
+    "graphql": "^16.7.1",
     "socket.io": "^4.6.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
@@ -27,7 +29,6 @@
   "devDependencies": {
     "@types/express": "^4.17.17",
     "@types/node": "^20.3.1",
-    "@types/node-fetch": "^2.6.4",
     "nodemon": "^2.0.22",
     "plop": "^3.1.2"
   }

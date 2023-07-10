@@ -1,5 +1,13 @@
-import fetch from "node-fetch";
+import {
+  ApolloClient,
+  InMemoryCache,
+  HttpLink,
+  ApolloError,
+  ApolloQueryResult,
+} from "@apollo/client/core";
+import { DocumentNode } from "graphql";
 import { currentConfig } from "./appconstants";
+import fetch from "cross-fetch";
 
 export type GraphQLResponse<T = any> = {
   data?: T;
@@ -9,44 +17,38 @@ export type GraphQLResponse<T = any> = {
 };
 
 class GraphqlClient {
-  private readonly endpoint: string;
-  private readonly headers: { [name: string]: string };
+  private client: ApolloClient<any>;
 
-  constructor(endpoint: string, headers: { [name: string]: string } = {}) {
-    this.endpoint = endpoint;
-    this.headers = headers;
+  constructor(uri: string) {
+    this.client = new ApolloClient({
+      link: new HttpLink({ uri, fetch }),
+      cache: new InMemoryCache(),
+    });
   }
 
   async query<T = any>(
-    query: string,
-    variables: { [name: string]: any } = {},
-    endpoint?: string
-  ): Promise<GraphQLResponse<T>> {
-    const response = await fetch(endpoint ? endpoint : this.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...this.headers,
-      },
-      body: JSON.stringify({ query, variables }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Network error, received status code ${response.status}`);
+    query: DocumentNode,
+    variables: { [name: string]: any } = {}
+  ): Promise<ApolloQueryResult<T>> {
+    try {
+      const result = await this.client.query<T>({ query, variables });
+      return result;
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        throw new Error(`GraphQL error ${error}`);
+      }
+      throw error;
     }
-
-    return await response.json();
   }
 
   async queryWithRetry<T = any>(
-    query: string,
+    query: DocumentNode,
     variables: { [name: string]: any } = {},
-    endpoint?: string,
     interval: number = 1000
-  ): Promise<GraphQLResponse<T>> {
+  ): Promise<ApolloQueryResult<T>> {
     while (true) {
       try {
-        const result = await this.query(query, variables, endpoint);
+        const result = await this.query(query, variables);
         return result;
       } catch (error) {
         if (error.message.includes("ECONNREFUSED")) {

@@ -1,4 +1,7 @@
-export const getPredictContracts = `query GetPredictContracts($offset: Int!, $chunkSize: Int!) {
+import gql from "graphql-tag";
+
+export const getPredictContracts = gql`
+  query GetPredictContracts($offset: Int!, $chunkSize: Int!) {
     predictContracts(skip: $offset, first: $chunkSize) {
       id
       token {
@@ -10,22 +13,23 @@ export const getPredictContracts = `query GetPredictContracts($offset: Int!, $ch
       blocksPerSubscription
       truevalSubmitTimeoutBlock
     }
-  }`
+  }
+`;
 
 type TPredictToken = {
-  id: string
-  name: string
-  symbol: string
-}
+  id: string;
+  name: string;
+  symbol: string;
+};
 
 type TPredictContract = {
-  id: string
-  token: TPredictToken
-  blocksPerEpoch: string
-  blocksPerSubscription: string
-  truevalSubmitTimeoutBlock: number
-}
+  id: string;
+  token: TPredictToken;
+  blocksPerEpoch: string;
+  blocksPerSubscription: string;
+  truevalSubmitTimeoutBlock: number;
+};
 
 export type TGetPredictContractsQueryResult = {
-  predictContracts: Array<TPredictContract>
-}
+  predictContracts: Array<TPredictContract>;
+};
