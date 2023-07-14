@@ -182,6 +182,14 @@ class Predictoor {
     return formattedBlocksPerEpoch;
   }
 
+  async getCurrentEpochStartBlockNumber(blockNumber: number): Promise<number> {
+    const soonestBlockToPredict: BigNumber = await this.instance?.railBlocknumToSlot(blockNumber);
+    const formattedSoonestBlockToPredict: number = parseInt(
+      ethers.utils.formatUnits(soonestBlockToPredict, 0)
+    );
+    return formattedSoonestBlockToPredict;
+  }
+
   async getAggPredval(
     block: number,
     user: ethers.Wallet
