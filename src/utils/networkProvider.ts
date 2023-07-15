@@ -7,7 +7,7 @@ type NetworkConfig = Record<NetworkNames, string>;
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: "http://172.15.0.3:8545",
+  development: "http://ec2-16-171-16-155.eu-north-1.compute.amazonaws.com:8545",
   mock: "http://localhost:8545",
   testnet: "",
   mainnet: "",
