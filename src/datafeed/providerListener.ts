@@ -37,13 +37,9 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     currentConfig.subgraph
   );
 
-  const filteredContracts = Object.values(contracts).filter((item) =>
-    currentConfig.opfProvidedPredictions.includes(item.address)
-  );
-
   const [predictoorContracts, currentBlock] = await Promise.all([
     initializeContracts({
-      contracts: filteredContracts,
+      contracts: Object.values(contracts),
     }),
     provider.getBlockNumber(),
   ]);
@@ -60,7 +56,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const BPE =
     await subscribedPredictoors[0]?.predictorContract.getBlocksPerEpoch();
 
-  let startedTransactions = [];
   provider.on("block", async (blockNumber) => {
     const currentEpoch = Math.floor(blockNumber / BPE);
     const currentEpochStartBlockNumber = await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartBlockNumber(blockNumber);
@@ -68,45 +63,20 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     const renewPredictoors = subscribedPredictoors.filter(
       ({ expires }) => expires < blockNumber + overlapBlockCount
     );
-
-    const filteredRenewPredictoors = renewPredictoors.filter(
-      ({ predictorContract }) =>
-        !startedTransactions.includes(predictorContract.address)
-    );
-    if (filteredRenewPredictoors.length > 0) {
-      startedTransactions.push(
-        ...filteredRenewPredictoors.map(
-          ({ predictorContract }) => predictorContract.address
-        )
-      );
-      checkAndSubscribe({
-        predictoorContracts: filteredRenewPredictoors.map(
-          ({ predictorContract }) => predictorContract
-        ),
-        currentBlock: blockNumber,
+    checkAndSubscribe({
+      predictoorContracts: renewPredictoors.map(
+        ({ predictorContract }) => predictorContract
+      ),
+      currentBlock: blockNumber,
       }).then((renewedPredictoors) => {
-        startedTransactions = startedTransactions.filter(
-          (address) =>
-            !renewedPredictoors.some(
-              ({ predictorContract }) => predictorContract.address === address
-            )
-        );
-
         renewedPredictoors.forEach((renewedPredictoor) => {
-          const index = subscribedPredictoors.findIndex(
-            ({ predictorContract }) =>
-              predictorContract.address ===
-              renewedPredictoor.predictorContract.address
-          );
-
-          subscribedPredictoors[index] = renewedPredictoor;
-        });
+        const index = subscribedPredictoors.findIndex(
+          ({ predictorContract }) =>
+          predictorContract.address === renewedPredictoor.predictorContract.address
+        );
+        subscribedPredictoors[index] = renewedPredictoor;
       });
-    }
-
-    //const epochFromContract =
-    //  await subscribedPredictoors[0]?.predictorContract.getCurrentEpoch();
-    //console.log("currentEpoch", currentEpoch, "epochFromContract",epochFromContract);
+    });
 
     if (currentEpoch === latestEpoch) return;
 

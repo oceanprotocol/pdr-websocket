@@ -1,3 +1,4 @@
+import { currentConfig } from "../appconstants";
 import { graphqlClientInstance } from "../graphqlClient";
 import {
   TGetPredictContractsQueryResult,
@@ -17,6 +18,7 @@ export const getAllInterestingPredictionContracts = async (
   subgraphURL: string
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000;
+  const contractAddresses = currentConfig.opfProvidedPredictions
   let offset = 0;
   const contracts: Record<string, TPredictionContract> = {};
   const whileValue = true;
@@ -24,13 +26,15 @@ export const getAllInterestingPredictionContracts = async (
     const variables = {
       offset,
       chunkSize,
+      contractAddresses
     };
-
     const { data, errors } =
       await graphqlClientInstance.queryWithRetry<TGetPredictContractsQueryResult>(
         getPredictContracts,
         variables
       );
+
+    console.log(data)
     const predictContracts = data?.predictContracts;
 
     if (errors || !predictContracts || predictContracts.length === 0) {
