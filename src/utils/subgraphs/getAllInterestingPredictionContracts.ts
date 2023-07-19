@@ -34,7 +34,6 @@ export const getAllInterestingPredictionContracts = async (
         variables
       );
 
-    console.log(data)
     const predictContracts = data?.predictContracts;
 
     if (errors || !predictContracts || predictContracts.length === 0) {

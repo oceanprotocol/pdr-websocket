@@ -51,7 +51,6 @@ class GraphqlClient {
         const result = await this.query(query, variables);
         return result;
       } catch (error) {
-        console.log(error)
         if (error.message.includes("ECONNREFUSED")) {
           console.log("Connection refused, retrying...");
           await new Promise((resolve) => setTimeout(resolve, interval));
