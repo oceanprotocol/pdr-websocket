@@ -8,6 +8,7 @@ export const getPredictContracts = gql`
         id
         name
         symbol
+        lastPriceValue
       }
       blocksPerEpoch
       blocksPerSubscription
@@ -20,6 +21,7 @@ type TPredictToken = {
   id: string;
   name: string;
   symbol: string;
+  lastPriceValue: number;
 };
 
 type TPredictContract = {
