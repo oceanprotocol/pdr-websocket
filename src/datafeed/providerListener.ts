@@ -63,6 +63,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   let startedTransactions = [];
   provider.on("block", async (blockNumber) => {
     const currentEpoch = Math.floor(blockNumber / BPE);
+    const currentEpochStartBlockNumber = await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartBlockNumber(blockNumber);
 
     const renewPredictoors = subscribedPredictoors.filter(
       ({ expires }) => expires < blockNumber + overlapBlockCount
@@ -117,6 +118,9 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE);
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
+      currentBlockNumber: blockNumber,
+      epochStartBlockNumber: currentEpochStartBlockNumber,
+      blocksPerEpoch: BPE,
       epochs: predictionEpochs,
       contracts: currentPredictorContracts,
     });
@@ -127,14 +131,16 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     });
 
     const result = currentPredictorContracts.map((predictorContract) => ({
-      predictions: aggPredVals.filter(
-        (item) => item.contractAddress === predictorContract.address
-      ),
+      predictions: 
+        aggPredVals.filter(
+          (item) => item.contractAddress === predictorContract.address
+        )
+      ,
       contractInfo: contracts[predictorContract.address],
     }));
 
     predValDataHolder.theFixedMessage = result;
-    console.log("newEpoch", result);
+    //console.log("newEpoch", result);
     io.emit("newEpoch", result);
   });
 };
