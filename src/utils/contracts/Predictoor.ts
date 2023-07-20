@@ -135,7 +135,7 @@ class Predictoor {
     //console.log("buyFromFreAndOrder worked");
     const orderParams = await this.getOrderParams(user);
     const freParams = {
-      exchangeContract: this.address,
+      exchangeContract: this.FRE.address,
       exchangeId,
       maxBaseTokenAmount: ethers.utils.parseEther(baseTokenAmount),
       swapMarketFee: 0,
