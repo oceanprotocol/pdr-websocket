@@ -9,9 +9,6 @@ import FixedRateExchange from "./FixedRateExchange";
 import Token from "./Token";
 import { ERC20Template3ABI } from "../../metadata/abis/ERC20Template3ABI";
 import { signHash } from "../signHash";
-import { OceanToken } from "./OceanToken";
-import { networkProvider } from "../networkProvider";
-import { IERC20ABI } from "../../metadata/abis/IERC20ABI";
 
 class Predictoor {
   public provider: ethers.providers.JsonRpcProvider;
@@ -20,7 +17,6 @@ class Predictoor {
   public FRE: FixedRateExchange | null;
   public exchangeId: BigNumber;
   public token: Token | null;
-  public oceanToken: OceanToken | null;
 
   public constructor(
     address: string,
@@ -32,11 +28,6 @@ class Predictoor {
     this.instance = null;
     this.FRE = null;
     this.exchangeId = BigNumber.from(0);
-    this.oceanToken = new OceanToken(
-      networkProvider.getProvider(),
-      "0x2473f4F7bf40ed9310838edFCA6262C17A59DF64",
-      IERC20ABI
-    );
   }
 
   async init() {
@@ -118,7 +109,7 @@ class Predictoor {
     return {
       consumer: user.address,
       serviceIndex: 0,
-      _providerFee: this.getCalculatedProviderFee(user),
+      _providerFee: await this.getCalculatedProviderFee(user),
       _consumeMarketFee: {
         consumeMarketFeeAddress: ethers.constants.AddressZero,
         consumeMarketFeeToken: ethers.constants.AddressZero,
@@ -148,12 +139,12 @@ class Predictoor {
     const estGas = await this.instance
       .connect(user)
       .estimateGas.buyFromFreAndOrder(orderParams, freParams);
-    console.log("buyFromFreAndOrderEstGas: ", estGas.toString());
-    const tx = await this.instance
+
+      const tx = await this.instance
       .connect(user)
       .buyFromFreAndOrder(orderParams, freParams, { gasLimit: estGas });
     const receipt = await tx.wait();
-    //console.log("receipt: ", receipt);
+    console.log("receipt: ", receipt);
 
     return receipt;
   }
@@ -186,8 +177,12 @@ class Predictoor {
       const formattedBaseTokenAmount =
         ethers.utils.formatEther(baseTokenAmount);
 
-      await this.approve(user, this.address || "", formattedBaseTokenAmount);
-
+      await this.token.approve(
+        user,
+        this.address || "",
+        ethers.utils.formatEther(baseTokenAmount),
+        this.provider
+      );
       //this.oceanToken?.approve(user, user.address, baseTokenAmount.toString());
 
       // console.log(">>>> Buy DT Now...! <<<<");
