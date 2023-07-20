@@ -61,6 +61,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     await subscribedPredictoors[0]?.predictorContract.getBlocksPerEpoch();
 
   let startedTransactions = [];
+
   provider.on("block", async (blockNumber) => {
     const currentEpoch = Math.floor(blockNumber / BPE);
 

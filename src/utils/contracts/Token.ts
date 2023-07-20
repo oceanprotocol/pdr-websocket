@@ -37,17 +37,17 @@ class Token {
         .connect(user)
         .estimateGas.approve(spender, ethers.utils.parseEther(amount));
 
-      // console.log(
-      //   "approve gasLimit",
-      //   ethers.utils.formatEther(gasLimit.toString())
-      // );
+      console.log(
+        "approve gasLimit",
+        ethers.utils.formatEther(gasLimit.toString())
+      );
       const tx = await this.contractInstance
         .connect(user)
         .approve(spender, ethers.utils.parseEther(amount), {
           gasLimit: gasLimit,
           gasPrice: gasPrice,
         });
-      // console.log(`Approval tx: ${tx.hash}.`);
+      console.log(`Approval tx: ${tx.hash}.`);
 
       const receipt = await tx.wait();
       // console.log(`Got receipt`);

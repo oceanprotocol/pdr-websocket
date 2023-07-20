@@ -7,7 +7,7 @@ type NetworkConfig = Record<NetworkNames, string>;
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: "http://172.15.0.3:8545",
+  development: "http://ec2-13-53-200-195.eu-north-1.compute.amazonaws.com:8545",
   mock: "http://localhost:8545",
   testnet: "",
   mainnet: "",
@@ -30,6 +30,10 @@ class NetworkProvider {
 
   getNetworkName(chainId: number): string | undefined {
     return networksData.find((data) => data.chainId == chainId)?.name;
+  }
+
+  getSigner(address: string) {
+    return this.provider.getSigner(address);
   }
 }
 

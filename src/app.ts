@@ -9,7 +9,9 @@ import { providerListener } from "./datafeed/providerListener";
 import { corsCheck } from "./utils/corsCheck";
 import { v1router } from "./routes/v1";
 import { newSubscriberListener } from "./datafeed/newSubscriberListener";
+import { logStream } from "./utils/logStream";
 
+logStream();
 const app = express();
 corsCheck(app);
 const httpServer = createServer(app);

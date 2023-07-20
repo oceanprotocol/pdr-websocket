@@ -48,8 +48,8 @@
   "barge": {
     "chainId": "8996",
     "oceanAddress": "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
-    "subgraph": "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "opfProvidedPredictions": ["0x7d0f243867679cfc684f67e26e83bf154adddc12"],
+    "subgraph": "http://ec2-13-53-200-195.eu-north-1.compute.amazonaws.com:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
+    "opfProvidedPredictions": ["0x54b5ebeed85f4178c6cb98dd185067991d058d55"],
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,
