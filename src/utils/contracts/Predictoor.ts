@@ -136,13 +136,15 @@ class Predictoor {
     console.log("orderParams: ", orderParams);
     console.log("freParams: ", freParams);
 
-    const estGas = await this.instance
+    const gasPrice = await this.provider.getGasPrice();
+
+    const gasLimit = await this.instance
       .connect(user)
       .estimateGas.buyFromFreAndOrder(orderParams, freParams);
 
-      const tx = await this.instance
+    const tx = await this.instance
       .connect(user)
-      .buyFromFreAndOrder(orderParams, freParams, { gasLimit: estGas });
+      .buyFromFreAndOrder(orderParams, freParams, { gasLimit, gasPrice });
     const receipt = await tx.wait();
     console.log("receipt: ", receipt);
 
