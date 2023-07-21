@@ -18,6 +18,6 @@ export async function signHash(signerAddress: string, message: string) {
   let v = "0x" + signedMessage.slice(128, 130);
   if (v === "0x00") v = "0x1b";
   if (v === "0x01") v = "0x1c";
-  console.log("{ v, r, s }", { v, r, s });
+
   return { v, r, s };
 }

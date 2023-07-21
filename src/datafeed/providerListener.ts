@@ -1,4 +1,8 @@
-import { currentConfig, overlapBlockCount } from "../utils/appconstants";
+import {
+  currentConfig,
+  overlapBlockCount,
+  predictoorWallet,
+} from "../utils/appconstants";
 import { checkAndSubscribe } from "../services/checkAndSubscribe";
 import {
   TPredictionContract,
@@ -14,6 +18,7 @@ import { clearPredValDataHolderByEpochs } from "../services/clearPredValDataHold
 import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { predValDataHolder } from "./dataHolder";
 import { calculatePredictionEpochs } from "../utils/utils";
+import { initializeAutorization } from "../services/initializeAuthorization";
 
 let latestEpoch = 0;
 
@@ -33,9 +38,12 @@ export type TProviderListenerEmitData = Array<{
 
 export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const provider = networkProvider.getProvider();
-  const contracts = await getAllInterestingPredictionContracts(
-    currentConfig.subgraph
-  );
+  const [contracts, authorizationInstance] = await Promise.all([
+    getAllInterestingPredictionContracts(currentConfig.subgraph),
+    initializeAutorization({
+      walletAddress: predictoorWallet.address,
+    }),
+  ]);
 
   const filteredContracts = Object.values(contracts).filter((item) =>
     currentConfig.opfProvidedPredictions.includes(item.address)
@@ -62,6 +70,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
 
   let startedTransactions = [];
 
+  console.log("subscribedPredictoors", subscribedPredictoors);
   provider.on("block", async (blockNumber) => {
     const currentEpoch = Math.floor(blockNumber / BPE);
 
@@ -120,6 +129,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       epochs: predictionEpochs,
       contracts: currentPredictorContracts,
+      authorizationInstance,
     });
 
     clearPredValDataHolderByEpochs({
@@ -135,7 +145,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }));
 
     predValDataHolder.theFixedMessage = result;
-    console.log("newEpoch", result);
+    //console.log("newEpoch", JSON.stringify(result));
     io.emit("newEpoch", result);
   });
 };

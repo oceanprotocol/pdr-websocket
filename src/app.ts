@@ -11,7 +11,10 @@ import { v1router } from "./routes/v1";
 import { newSubscriberListener } from "./datafeed/newSubscriberListener";
 import { logStream } from "./utils/logStream";
 
-logStream();
+if (process.env.NODE_ENV === "development") {
+  logStream();
+}
+
 const app = express();
 corsCheck(app);
 const httpServer = createServer(app);
