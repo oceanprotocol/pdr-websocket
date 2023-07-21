@@ -72,7 +72,7 @@
     "chainId": "23295",
     "oceanAddress": "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     "subgraph": "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    "opfProvidedPredictions": [],
+    "opfProvidedPredictions": ["0x1f2712f0175d51701c3081b00b66741ea1b05df8","0x378d956f0f0483c53a24560e0a70db4b1c2c20c0"],
     "tokenPredictions": [
       {
         "blocks_per_epoch": 4000,
