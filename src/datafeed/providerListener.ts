@@ -13,6 +13,7 @@ import { getMultipleAggPredValsByEpoch } from "../services/getMultipleAggPredVal
 import { clearPredValDataHolderByEpochs } from "../services/clearPredValDataHolderByEpochs";
 import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { predValDataHolder } from "./dataHolder";
+import { calculatePredictionEpochs } from "../utils/utils";
 
 let latestEpoch = 0;
 
@@ -62,43 +63,30 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     const renewPredictoors = subscribedPredictoors.filter(
       ({ expires }) => expires < blockNumber + overlapBlockCount
     );
-
-    if (renewPredictoors.length > 0) {
-      checkAndSubscribe({
-        predictoorContracts: renewPredictoors.map(
-          ({ predictorContract }) => predictorContract
-        ),
-        currentBlock: blockNumber,
+    checkAndSubscribe({
+      predictoorContracts: renewPredictoors.map(
+        ({ predictorContract }) => predictorContract
+      ),
+      currentBlock: blockNumber,
       }).then((renewedPredictoors) => {
         renewedPredictoors.forEach((renewedPredictoor) => {
-          const index = subscribedPredictoors.findIndex(
-            ({ predictorContract }) =>
-              predictorContract.address ===
-              renewedPredictoor.predictorContract.address
-          );
-
-          subscribedPredictoors[index] = renewedPredictoor;
-        });
+        const index = subscribedPredictoors.findIndex(
+          ({ predictorContract }) =>
+          predictorContract.address === renewedPredictoor.predictorContract.address
+        );
+        subscribedPredictoors[index] = renewedPredictoor;
       });
-    }
-
-    //const epochFromContract =
-    //  await subscribedPredictoors[0]?.predictorContract.getCurrentEpoch();
-    //console.log("currentEpoch", currentEpoch, "epochFromContract",epochFromContract);
+    });
 
     if (currentEpoch === latestEpoch) return;
 
-    console.log("currentEpoch Start", currentEpoch)
     latestEpoch = currentEpoch;
 
     const currentPredictorContracts = subscribedPredictoors.map(
       ({ predictorContract }) => predictorContract
     );
-    const predictionEpochs = [
-      BPE * (currentEpoch - 1),
-      BPE * currentEpoch,
-      BPE * (currentEpoch + 1),
-    ];
+    const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE);
+
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentBlockNumber: blockNumber,
       epochStartBlockNumber: currentEpochStartBlockNumber,

@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 
 export const getPredictContracts = gql`
-  query GetPredictContracts($offset: Int!, $chunkSize: Int!) {
-    predictContracts(skip: $offset, first: $chunkSize) {
+  query GetPredictContracts($offset: Int!, $chunkSize: Int!, $contractAddresses: [String!]!) {
+    predictContracts(skip: $offset, first: $chunkSize, where: { id_in: $contractAddresses }) {
       id
       token {
         id
