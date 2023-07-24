@@ -12,6 +12,8 @@ export const checkAndSubscribe = async ({
 }: TCheckAndSubscribeArgs): Promise<TCheckAndSubscribeResult> =>
   await Promise.all(
     predictoorContracts.map(async (predictorContract) => {
+      startedTransactions?.push(predictorContract.address);
+
       const subscription = await predictorContract.getSubscriptions(
         predictoorWallet.address
       );
@@ -20,7 +22,6 @@ export const checkAndSubscribe = async ({
       const isValid = expirationBlock > currentBlock + overlapBlockCount;
 
       if (!isValid) {
-        startedTransactions.push(predictorContract.address);
         await predictorContract.buyAndStartSubscription(predictoorWallet);
         const subscription = await predictorContract.getSubscriptions(
           predictoorWallet.address

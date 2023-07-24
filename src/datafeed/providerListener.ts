@@ -98,6 +98,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     });
 
     if (currentEpoch === latestEpoch) return;
+    //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
 

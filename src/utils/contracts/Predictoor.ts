@@ -128,12 +128,10 @@ class Predictoor {
         .connect(user)
         .estimateGas.buyFromFreAndOrder(orderParams, freParams);
       // Check if gas limit is below minimum and adjust if necessary
-      if (
-        process.env.ENVIRONMENT === "barge" &&
-        process.env.MIN_GAS_LIMIT &&
-        gasLimit.lt(process.env.MIN_GAS_LIMIT)
-      ) {
-        gasLimit = BigNumber.from(process.env.MIN_GAS_LIMIT);
+
+      if (process.env.ENVIRONMENT === "barge" && process.env.MIN_GAS_PRICE) {
+        const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE));
+        if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit;
       }
       // Execute transaction and wait for receipt
       const tx = await this.instance
@@ -212,7 +210,8 @@ class Predictoor {
   }
 
   async getCurrentEpochStartBlockNumber(blockNumber: number): Promise<number> {
-    const soonestBlockToPredict: BigNumber = await this.instance?.railBlocknumToSlot(blockNumber);
+    const soonestBlockToPredict: BigNumber =
+      await this.instance?.railBlocknumToSlot(blockNumber);
     const formattedSoonestBlockToPredict: number = parseInt(
       ethers.utils.formatUnits(soonestBlockToPredict, 0)
     );
