@@ -132,3 +132,5 @@ build
 
 # ignore logs
 src/utils/logs.txt
+
+.DS_Store
