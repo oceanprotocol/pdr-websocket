@@ -11,6 +11,7 @@ export const getMultipleAggPredValsByEpoch = ({
   blocksPerEpoch,
   epochs,
   contracts,
+  authorizationInstance,
 }: TGetMultipleAggPredValsByEpochArgs): Promise<
   Array<TPredValDataHolderItem & { contractAddress: string }>
 > =>
@@ -26,7 +27,11 @@ export const getMultipleAggPredValsByEpoch = ({
           return { ...cachedValue, contractAddress: contract.address };
         }
         const predVal = {
-          ...(await contract.getAggPredval(epoch, predictoorWallet)),
+          ...(await contract.getAggPredval(
+            epoch,
+            predictoorWallet,
+            authorizationInstance.getAuthorizationData()
+          )),
           epoch,
           currentBlockNumber,
           epochStartBlockNumber,

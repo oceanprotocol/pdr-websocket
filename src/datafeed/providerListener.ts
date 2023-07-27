@@ -1,4 +1,8 @@
-import { currentConfig, overlapBlockCount } from "../utils/appconstants";
+import {
+  currentConfig,
+  overlapBlockCount,
+  predictoorWallet,
+} from "../utils/appconstants";
 import { checkAndSubscribe } from "../services/checkAndSubscribe";
 import {
   TPredictionContract,
@@ -14,6 +18,7 @@ import { clearPredValDataHolderByEpochs } from "../services/clearPredValDataHold
 import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { predValDataHolder } from "./dataHolder";
 import { calculatePredictionEpochs } from "../utils/utils";
+import { initializeAutorization } from "../services/initializeAuthorization";
 
 let latestEpoch = 0;
 
@@ -33,9 +38,12 @@ export type TProviderListenerEmitData = Array<{
 
 export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const provider = networkProvider.getProvider();
-  const contracts = await getAllInterestingPredictionContracts(
-    currentConfig.subgraph
-  );
+  const [contracts, authorizationInstance] = await Promise.all([
+    getAllInterestingPredictionContracts(currentConfig.subgraph),
+    initializeAutorization({
+      walletAddress: predictoorWallet.address,
+    }),
+  ]);
 
   const [predictoorContracts, currentBlock] = await Promise.all([
     initializeContracts({
@@ -56,29 +64,41 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const BPE =
     await subscribedPredictoors[0]?.predictorContract.getBlocksPerEpoch();
 
+  let startedTransactions: Array<string> = [];
+
   provider.on("block", async (blockNumber) => {
     const currentEpoch = Math.floor(blockNumber / BPE);
-    const currentEpochStartBlockNumber = await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartBlockNumber(blockNumber);
+    const currentEpochStartBlockNumber =
+      await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartBlockNumber(
+        blockNumber
+      );
 
     const renewPredictoors = subscribedPredictoors.filter(
       ({ expires }) => expires < blockNumber + overlapBlockCount
     );
+
     checkAndSubscribe({
-      predictoorContracts: renewPredictoors.map(
-        ({ predictorContract }) => predictorContract
-      ),
+      predictoorContracts: renewPredictoors
+        .map(({ predictorContract }) => predictorContract)
+        .filter((item) => !startedTransactions.includes(item.address)),
       currentBlock: blockNumber,
-      }).then((renewedPredictoors) => {
-        renewedPredictoors.forEach((renewedPredictoor) => {
+      startedTransactions: startedTransactions,
+    }).then((renewedPredictoors) => {
+      renewedPredictoors.forEach((renewedPredictoor) => {
         const index = subscribedPredictoors.findIndex(
           ({ predictorContract }) =>
-          predictorContract.address === renewedPredictoor.predictorContract.address
+            predictorContract.address ===
+            renewedPredictoor.predictorContract.address
         );
         subscribedPredictoors[index] = renewedPredictoor;
+        startedTransactions = startedTransactions.filter(
+          (item) => item !== renewedPredictoor.predictorContract.address
+        );
       });
     });
 
     if (currentEpoch === latestEpoch) return;
+    //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
 
@@ -93,6 +113,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
       blocksPerEpoch: BPE,
       epochs: predictionEpochs,
       contracts: currentPredictorContracts,
+      authorizationInstance,
     });
 
     clearPredValDataHolderByEpochs({
@@ -101,16 +122,14 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     });
 
     const result = currentPredictorContracts.map((predictorContract) => ({
-      predictions: 
-        aggPredVals.filter(
-          (item) => item.contractAddress === predictorContract.address
-        )
-      ,
+      predictions: aggPredVals.filter(
+        (item) => item.contractAddress === predictorContract.address
+      ),
       contractInfo: contracts[predictorContract.address],
     }));
 
     predValDataHolder.theFixedMessage = result;
-    //console.log("newEpoch", result);
+    //console.log("newEpoch", JSON.stringify(result));
     io.emit("newEpoch", result);
   });
 };
