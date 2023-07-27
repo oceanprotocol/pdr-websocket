@@ -18,16 +18,6 @@ export type TPredictionContract = {
   last_submitted_epoch: number;
 };
 
-function keccak256ToString(hash) {
-  // Convert hexadecimal hash to byte array
-  const byteArray = hash.match(/.{1,2}/g).map(byte => parseInt(byte, 16));
-
-  // Convert byte array to string using UTF-8 encoding
-  const string = new TextDecoder('utf-8').decode(new Uint8Array(byteArray));
-
-  return string;
-}
-
 export const getAllInterestingPredictionContracts = async (
   subgraphURL: string
 ): Promise<Record<string, TPredictionContract>> => {
