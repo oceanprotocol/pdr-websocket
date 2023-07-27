@@ -8,9 +8,11 @@ export const initialData = async (
 ) => {
   try {
     // Send a JSON response
-    res.status(200).json({
-      results: predValDataHolder.theFixedMessage,
-    });
+    if (predValDataHolder.theFixedMessage) {
+      res.status(200).json(predValDataHolder.theFixedMessage);
+      return;
+    }
+    next(new Error("No data available"));
   } catch (error) {
     next(error); // Pass the error to the error handling middleware
   }
