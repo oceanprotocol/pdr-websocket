@@ -4,7 +4,7 @@ import { initializeAutorization } from "../initializeAuthorization";
 export type TGetMultipleAggPredValsByEpochArgs = {
   currentBlockNumber: number;
   epochStartBlockNumber: number;
-  blocksPerEpoch: number;
+  secondsPerEpoch: number;
   epochs: Array<number>;
   contracts: Array<Predictoor>;
   authorizationInstance: Awaited<ReturnType<typeof initializeAutorization>>;

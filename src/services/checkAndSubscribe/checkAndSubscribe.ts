@@ -7,7 +7,7 @@ import { overlapBlockCount, predictoorWallet } from "../../utils/appconstants";
 
 export const checkAndSubscribe = async ({
   predictoorContracts,
-  currentBlock,
+  currentTs,
   startedTransactions,
 }: TCheckAndSubscribeArgs): Promise<TCheckAndSubscribeResult> =>
   await Promise.all(
@@ -18,8 +18,8 @@ export const checkAndSubscribe = async ({
         predictoorWallet.address
       );
 
-      let expirationBlock = subscription.expires.toNumber();
-      const isValid = expirationBlock > currentBlock + overlapBlockCount;
+      let expirationTs = subscription.expires.toNumber();
+      const isValid = expirationTs > currentTs;
 
       if (!isValid) {
         await predictorContract.buyAndStartSubscription(predictoorWallet);
@@ -27,12 +27,12 @@ export const checkAndSubscribe = async ({
           predictoorWallet.address
         );
 
-        expirationBlock = subscription.expires.toNumber();
+        expirationTs = subscription.expires.toNumber();
       }
 
       return {
         predictorContract,
-        expires: expirationBlock,
+        expires: expirationTs,
       };
     })
   );

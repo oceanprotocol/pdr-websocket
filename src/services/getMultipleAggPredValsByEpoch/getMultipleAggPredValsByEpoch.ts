@@ -6,9 +6,9 @@ import { predictoorWallet } from "../../utils/appconstants";
 import { TGetMultipleAggPredValsByEpochArgs } from "./getMultipleAggPredValsByEpoch.types";
 
 export const getMultipleAggPredValsByEpoch = ({
-  currentBlockNumber,
-  epochStartBlockNumber,
-  blocksPerEpoch,
+  currentTs,
+  epochStartTs,
+  secondsPerEpoch,
   epochs,
   contracts,
   authorizationInstance,
@@ -33,9 +33,9 @@ export const getMultipleAggPredValsByEpoch = ({
             authorizationInstance.getAuthorizationData()
           )),
           epoch,
-          currentBlockNumber,
-          epochStartBlockNumber,
-          blocksPerEpoch,
+          currentTs,
+          epochStartTs,
+          secondsPerEpoch,
         };
         predValDataHolder.setItemToContract(contract.address, predVal);
         return { ...predVal, contractAddress: contract.address };

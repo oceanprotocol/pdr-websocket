@@ -551,7 +551,7 @@ export const ERC20Template3ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "blocksPerEpoch",
+        name: "secondsPerEpoch",
         type: "uint256",
       },
     ],
@@ -564,7 +564,7 @@ export const ERC20Template3ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "blocksPerEpoch",
+        name: "secondsPerEpoch",
         type: "uint256",
       },
       {
@@ -795,7 +795,7 @@ export const ERC20Template3ABI = [
   },
   {
     inputs: [],
-    name: "blocksPerEpoch",
+    name: "secondsPerEpoch",
     outputs: [
       {
         internalType: "uint256",
