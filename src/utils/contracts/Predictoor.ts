@@ -220,39 +220,35 @@ class Predictoor {
 
   async getAggPredval(
     ts: number,
-    user: string
-  ): Promise<TGetAggPredvalResult | null> {
+    user: ethers.Wallet,
+    authorizationMessage: TAuthorizationUser
+    ): Promise<TGetAggPredvalResult | null> {
     try {
       if (this.instance) {
         const [nom, denom] = await this.instance
           .connect(user)
-          .getAggPredval(ts)
-
-        const nominator = ethers.utils.formatUnits(nom, 18)
-        const denominator = ethers.utils.formatUnits(nom, 18)
-
-        // TODO - Review in scale/testnet/production.
-        // This will be either 1 or 0 right now.
-        let confidence: number = parseFloat(nominator) / parseFloat(denominator)
+          .getAggPredval(ts, authorizationMessage);
+        const nominator = ethers.utils.formatUnits(nom, 18);
+        const denominator = ethers.utils.formatUnits(nom, 18);
+        // Calculate confidence and direction
+        let confidence: number =
+          parseFloat(nominator) / parseFloat(denominator);
         if (isNaN(confidence)) {
-          confidence = 0
+          confidence = 0;
         }
-        let dir: number = confidence >= 0.5 ? 1 : 0
-
+        let dir: number = confidence >= 0.5 ? 1 : 0;
         return {
           nom: nominator,
           denom: denominator,
           confidence: confidence,
           dir: dir,
-          stake: denom?.toString()
-        }
+          stake: denom?.toString(),
+        };
       }
-
-      return null
+      return null;
     } catch (e) {
-      // console.log("Failed to call getAggPredval");
-      console.error(e)
-      return null
+      console.error(e);
+      return null;
     }
   }
 }
