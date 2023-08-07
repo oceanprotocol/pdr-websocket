@@ -8,9 +8,13 @@ import {
 import FixedRateExchange from "./FixedRateExchange";
 import Token from "./Token";
 import { ERC20Template3ABI } from "../../metadata/abis/ERC20Template3ABI";
-import { signHash } from "../signHash";
+import { signHash, signHashWithUser } from "../signHash";
 import { error } from "console";
 import { TAuthorizationUser } from "../../services/initializeAuthorization";
+import { oceanProviderInitializer } from "../oceanProviderInitializer";
+import { currentConfig } from "../appconstants";
+import { TPredictionContract } from "../subgraphs/getAllInterestingPredictionContracts";
+import { networkProvider } from "../networkProvider";
 // Predictoor class
 class Predictoor {
   public provider: ethers.providers.JsonRpcProvider;
@@ -19,16 +23,19 @@ class Predictoor {
   public FRE: FixedRateExchange | null;
   public exchangeId: BigNumber;
   public token: Token | null;
+  public details: TPredictionContract;
   // Constructor
   public constructor(
     address: string,
-    provider: ethers.providers.JsonRpcProvider
+    provider: ethers.providers.JsonRpcProvider,
+    details: TPredictionContract
   ) {
     this.address = address;
     this.token = null;
     this.provider = provider;
     this.instance = null;
     this.FRE = null;
+    this.details = details;
     this.exchangeId = BigNumber.from(0);
   }
   // Initialize method
@@ -63,7 +70,13 @@ class Predictoor {
   }
   // Calculate provider fee
   async getCalculatedProviderFee(user: ethers.Wallet): Promise<TProviderFee> {
-    const providerData = JSON.stringify({ timeout: 0 });
+    const fastBlockNumber = await networkProvider.getProvider()._getFastBlockNumber();
+    const userAddress = await user.getAddress();
+    const providerData = JSON.stringify({
+      timeout: 0
+    });
+
+    
     const providerFeeToken = ethers.constants.AddressZero;
     const providerFeeAmount = 0;
     const providerValidUntil = 0;
@@ -72,16 +85,17 @@ class Predictoor {
       ["bytes", "address", "address", "uint256", "uint256"],
       [
         ethers.utils.hexlify(ethers.utils.toUtf8Bytes(providerData)),
-        await user.getAddress(),
+        userAddress,
         providerFeeToken,
         providerFeeAmount,
         providerValidUntil,
       ]
     );
     // Sign the message
-    const { v, r, s } = await signHash(user.address, message);
+    const { v, r, s } = await signHash(userAddress, message);
+
     return {
-      providerFeeAddress: await user.getAddress(),
+      providerFeeAddress: userAddress,
       providerFeeToken,
       providerFeeAmount,
       v,
@@ -101,9 +115,9 @@ class Predictoor {
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
-        consumeMarketFeeAddress: ethers.constants.AddressZero,
-        consumeMarketFeeToken: ethers.constants.AddressZero,
-        consumeMarketFeeAmount: 0,
+        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
+        consumeMarketFeeToken: this.details.publishMarketFeeToken,
+        consumeMarketFeeAmount: this.details.publishMarketFeeAmount,
       },
     };
   }
@@ -124,20 +138,26 @@ class Predictoor {
       };
       // Get gas price and limit
       const gasPrice = await this.provider.getGasPrice();
-      let gasLimit = await this.instance
-        .connect(user)
-        .estimateGas.buyFromFreAndOrder(orderParams, freParams);
+      //let gasLimit = await this.instance
+      //  .connect(user)
+      //  .estimateGas.buyFromFreAndOrder(orderParams, freParams);
       // Check if gas limit is below minimum and adjust if necessary
 
+      //console.log("gasLimit", gasLimit.toString());
+      /*
       if (process.env.ENVIRONMENT === "barge" && process.env.MIN_GAS_PRICE) {
         const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE));
         if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit;
-      }
+      }*/
+      //const gasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE));
+      const latestGasLimit = (await networkProvider.getProvider().getBlock('latest')).gasLimit
+      
+     
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit,
+          gasLimit: latestGasLimit,
           gasPrice,
         });
       const receipt = await tx.wait();
@@ -156,6 +176,7 @@ class Predictoor {
       const dtPrice: any = await this.FRE?.getDtPrice(
         this.exchangeId?.toString()
       );
+
       const baseTokenAmount = dtPrice.baseTokenAmount;
       // Check if baseTokenAmount is valid and token exists
       if (!baseTokenAmount || baseTokenAmount instanceof Error || !this.token) {
