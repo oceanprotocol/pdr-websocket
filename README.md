@@ -19,9 +19,31 @@ Check environment variables from .env.dev file and update them accordangly to yo
 ### Update configs
 
 - opfProvidedPredictions: List of Predictoor contracts that the app it's going to purchase subscriptions for, get the predictions and serve it to the client using socket connection.
-- 
 
-### Building the Docker image
+
+## Run the app
+
+### Standalone
+
+#### Install dependencies
+
+```bash
+npm i
+```
+
+#### Start the app
+
+```bash
+npm start
+# or
+yarn start
+# or
+pnpm start
+```
+
+### As docket container
+
+#### Building the Docker image
 
 In the project directory, build the Docker image with the following command:
 
@@ -31,7 +53,7 @@ docker build --build-arg NODE_ENV=development -t pdr-websocket .
 
 This command builds a Docker image for the PDR-Websocket project in development mode. The `-t` option tags our image with the name `pdr-websocket`.
 
-### Running the Docker container
+#### Running the Docker container
 
 After building the Docker image, run a container with this image using the following command:
 
