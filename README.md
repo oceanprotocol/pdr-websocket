@@ -1,8 +1,9 @@
 # PDR-Websocket Project
 
-This is the PDR-Websocket project, a websockets server integrated into the Ocean protocol's network.
+This is the PDR-Websocket project, a websockets server that checks for specified Predictoor contracts, buys them based on the provided Private Key and sends the data to the clients.
 
 ## Prerequisites
+If you are running against Barge!
 
 Before setting up the PDR-Websocket project, make sure you have the following components running:
 
@@ -10,6 +11,15 @@ Before setting up the PDR-Websocket project, make sure you have the following co
 - Barge: Barge is a collection of Ocean components packed into one Docker Compose file for easy local development.
 
 ## Setup
+
+### Update env variables
+
+Check environment variables from .env.dev file and update them accordangly to your setup.
+
+### Update configs
+
+- opfProvidedPredictions: List of Predictoor contracts that the app it's going to purchase subscriptions for, get the predictions and serve it to the client using socket connection.
+- 
 
 ### Building the Docker image
 
