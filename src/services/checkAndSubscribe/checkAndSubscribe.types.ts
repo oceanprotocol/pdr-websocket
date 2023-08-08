@@ -2,7 +2,7 @@ import Predictoor from "../../utils/contracts/Predictoor";
 
 export type TCheckAndSubscribeArgs = {
   predictoorContracts: Array<Predictoor>;
-  currentBlock: number;
+  currentTs: number;
   startedTransactions?: Array<string>;
 };
 
