@@ -55,7 +55,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
     currentBlock,
-    contracts
   });
 
   createDataHolders({
@@ -84,7 +83,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
         .filter((item) => !startedTransactions.includes(item.address)),
       currentBlock: blockNumber,
       startedTransactions: startedTransactions,
-      contracts
     }).then((renewedPredictoors) => {
       renewedPredictoors.forEach((renewedPredictoor) => {
         const index = subscribedPredictoors.findIndex(

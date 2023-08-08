@@ -9,7 +9,6 @@ export const checkAndSubscribe = async ({
   predictoorContracts,
   currentBlock,
   startedTransactions,
-  contracts
 }: TCheckAndSubscribeArgs): Promise<TCheckAndSubscribeResult> =>
   await Promise.all(
     predictoorContracts.map(async (predictorContract) => {

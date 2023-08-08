@@ -5,7 +5,6 @@ export type TCheckAndSubscribeArgs = {
   predictoorContracts: Array<Predictoor>;
   currentBlock: number;
   startedTransactions?: Array<string>;
-  contracts: Record<string, TPredictionContract>;
 };
 
 export type TCheckAndSubscribeResult = Array<{
