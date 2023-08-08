@@ -2086,7 +2086,7 @@ export const ERC20Template3ABI = [
   },
   {
     inputs: [],
-    name: "trueValSubmitTimeoutBlock",
+    name: "truevalSubmitTimeout",
     outputs: [
       {
         internalType: "uint256",
