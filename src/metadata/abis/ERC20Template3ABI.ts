@@ -1090,7 +1090,7 @@ export const ERC20Template3ABI = [
         type: "uint256",
       },
     ],
-    name: "epoch",
+    name: "toStartEpoch",
     outputs: [
       {
         internalType: "uint256",
@@ -1795,7 +1795,7 @@ export const ERC20Template3ABI = [
         type: "uint256",
       },
     ],
-    name: "soonestTsToPredict",
+    name: "soonestEpochToPredict",
     outputs: [
       {
         internalType: "uint256",
