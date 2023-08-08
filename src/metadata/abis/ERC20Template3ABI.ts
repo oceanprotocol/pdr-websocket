@@ -1795,7 +1795,7 @@ export const ERC20Template3ABI = [
         type: "uint256",
       },
     ],
-    name: "soonestBlockToPredict",
+    name: "soonestTsToPredict",
     outputs: [
       {
         internalType: "uint256",

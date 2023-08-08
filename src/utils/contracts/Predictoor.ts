@@ -211,9 +211,9 @@ class Predictoor {
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
     const soonestTsToPredict: BigNumber =
-      await this.instance?.soonestEpochToPredict(seconds)
+      await this.instance?.epoch(seconds)
     const formattedSoonestTsToPredict: number = parseInt(
-      ethers.utils.formatUnits(soonestBlockToPredict, 0)
+      ethers.utils.formatUnits(soonestTsToPredict, 0)
     )
     return formattedSoonestTsToPredict
   }
@@ -222,7 +222,7 @@ class Predictoor {
     ts: number,
     user: ethers.Wallet,
     authorizationMessage: TAuthorizationUser
-    ): Promise<TGetAggPredvalResult | null> {
+  ): Promise<TGetAggPredvalResult | null> {
     try {
       if (this.instance) {
         const [nom, denom] = await this.instance
