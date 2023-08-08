@@ -17,7 +17,7 @@ export const getPredictContracts = gql`
        }
       }
       secondsPerEpoch
-      blocksPerSubscription
+      secondsPerSubscription
       truevalSubmitTimeout
     }
   }
@@ -49,7 +49,7 @@ type TPredictContract = {
   id: string;
   token: TPredictToken;
   secondsPerEpoch: string;
-  blocksPerSubscription: string;
+  secondsPerSubscription: string;
   truevalSubmitTimeout: number;
 };
 

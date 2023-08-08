@@ -5,7 +5,7 @@ import {
   TGetPredictContractsQueryResult,
   getPredictContracts,
 } from "./queries/getPredictContracts";
-import {TNft} from "./queries/getPredictContracts";
+import { TNft } from "./queries/getPredictContracts";
 
 export type TPredictionContract = {
   name: string;
@@ -14,7 +14,7 @@ export type TPredictionContract = {
   market: string;
   symbol: string;
   secondsPerEpoch: string;
-  blocksPerSubscription: string;
+  secondsPerSubscription: string;
   last_submitted_epoch: number;
 };
 
@@ -46,8 +46,8 @@ export const getAllInterestingPredictionContracts = async (
 
     for (const item of predictContracts) {
       let market
-      item.token.nft.nftData.forEach((i:TNft) => {
-        if(i.key == NftKeys.MARKET){
+      item.token.nft.nftData.forEach((i: TNft) => {
+        if (i.key == NftKeys.MARKET) {
           market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
         }
       })
@@ -58,7 +58,7 @@ export const getAllInterestingPredictionContracts = async (
         address: item.id,
         symbol: item.token.symbol,
         secondsPerEpoch: item.secondsPerEpoch,
-        blocksPerSubscription: item.blocksPerSubscription,
+        secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,
       };
     }
