@@ -211,7 +211,7 @@ class Predictoor {
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
     const soonestTsToPredict: BigNumber =
-      await this.instance?.epoch(seconds)
+      await this.instance?.toEpochStart(seconds)
     const formattedSoonestTsToPredict: number = parseInt(
       ethers.utils.formatUnits(soonestTsToPredict, 0)
     )
