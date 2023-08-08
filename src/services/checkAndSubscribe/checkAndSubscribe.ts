@@ -22,10 +22,6 @@ export const checkAndSubscribe = async ({
       let expirationBlock = subscription.expires.toNumber();
       const isValid = expirationBlock > currentBlock + overlapBlockCount;
 
-      const relatedContract = Object.values(contracts).find(
-        (contract) => contract.address === predictorContract.address
-      );
-
       if (!isValid) {
         await predictorContract.buyAndStartSubscription(predictoorWallet);
         const subscription = await predictorContract.getSubscriptions(

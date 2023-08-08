@@ -8,11 +8,8 @@ import {
 import FixedRateExchange from "./FixedRateExchange";
 import Token from "./Token";
 import { ERC20Template3ABI } from "../../metadata/abis/ERC20Template3ABI";
-import { signHash, signHashWithUser } from "../signHash";
-import { error } from "console";
+import { signHash } from "../signHash";
 import { TAuthorizationUser } from "../../services/initializeAuthorization";
-import { oceanProviderInitializer } from "../oceanProviderInitializer";
-import { currentConfig } from "../appconstants";
 import { TPredictionContract } from "../subgraphs/getAllInterestingPredictionContracts";
 import { networkProvider } from "../networkProvider";
 // Predictoor class
