@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/app.ts",
   "scripts": {
-    "start": "NODE_ENV=dev nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
+    "start": "NODE_ENV=local nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
     "create": "plop",
     "build-dev": "tsc -p tsconfig.json",
     "start-dev": "NODE_ENV=dev node build/app.js",
