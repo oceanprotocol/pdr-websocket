@@ -9,7 +9,8 @@ export const initializeContracts = async ({
     contracts.map(async (contract) => {
       const predictoor = new Predictoor(
         contract.address,
-        networkProvider.getProvider()
+        networkProvider.getProvider(),
+        contract
       );
       await predictoor.init();
       return predictoor;
