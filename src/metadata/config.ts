@@ -55,7 +55,7 @@ export default {
     subgraph: process.env.DEV_AWS_URL
       ? `${process.env.DEV_AWS_URL}:9000/subgraphs/name/oceanprotocol/ocean-subgraph`
       : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    opfProvidedPredictions: ["0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5"],
+    opfProvidedPredictions: ["0x4e7eaeb4ab569e82af8c5fa9fa9191a9563ca35c"],
     tokenPredictions: [
       {
         blocks_per_epoch: 4000,

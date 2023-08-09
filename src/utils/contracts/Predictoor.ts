@@ -246,22 +246,25 @@ class Predictoor {
         const [nom, denom] = await this.instance
           .connect(user)
           .getAggPredval(block, authorizationMessage);
-        const nominator = ethers.utils.formatUnits(nom, 18);
-        const denominator = ethers.utils.formatUnits(nom, 18);
-        // Calculate confidence and direction
-        let confidence: number =
-          parseFloat(nominator) / parseFloat(denominator);
-        if (isNaN(confidence)) {
-          confidence = 0;
-        }
-        let dir: number = confidence >= 0.5 ? 1 : 0;
-        return {
-          nom: nominator,
-          denom: denominator,
-          confidence: confidence,
-          dir: dir,
-          stake: denom?.toString(),
-        };
+          const nominator = ethers.utils.formatUnits(nom, 18)
+          const denominator = ethers.utils.formatUnits(denom, 18)
+  
+          let confidence: number = parseFloat(nominator) / parseFloat(denominator)
+          let dir: number = confidence >= 0.5 ? 1 : 0
+          if (confidence > 0.5) {
+            confidence -= 0.5
+          } else {
+            confidence = 0.5 - confidence
+          }
+          confidence = (confidence / 0.5) * 100
+  
+          return {
+            nom: nominator,
+            denom: denominator,
+            confidence: confidence,
+            dir: dir,
+            stake: parseFloat(ethers.utils.formatUnits(denom, 18))
+          }
       }
       return null;
     } catch (e) {
