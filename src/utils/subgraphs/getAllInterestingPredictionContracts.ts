@@ -5,7 +5,7 @@ import {
   TGetPredictContractsQueryResult,
   getPredictContracts,
 } from "./queries/getPredictContracts";
-import {TNft} from "./queries/getPredictContracts";
+import { TNftDataElement } from "./queries/getPredictContracts";
 
 export type TPredictionContract = {
   name: string;
@@ -16,13 +16,18 @@ export type TPredictionContract = {
   blocksPerEpoch: string;
   blocksPerSubscription: string;
   last_submitted_epoch: number;
+  nftId: string;
+  publishMarketFeeAddress: string;
+  publishMarketFeeAmount: string;
+  paymentCollector: string;
+  publishMarketFeeToken: string;
 };
 
 export const getAllInterestingPredictionContracts = async (
   subgraphURL: string
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000;
-  const contractAddresses = currentConfig.opfProvidedPredictions
+  const contractAddresses = currentConfig.opfProvidedPredictions;
   let offset = 0;
   const contracts: Record<string, TPredictionContract> = {};
   const whileValue = true;
@@ -30,7 +35,7 @@ export const getAllInterestingPredictionContracts = async (
     const variables = {
       offset,
       chunkSize,
-      contractAddresses
+      contractAddresses,
     };
     const { data, errors } =
       await graphqlClientInstance.queryWithRetry<TGetPredictContractsQueryResult>(
@@ -45,12 +50,12 @@ export const getAllInterestingPredictionContracts = async (
     }
 
     for (const item of predictContracts) {
-      let market
-      item.token.nft.nftData.forEach((i:TNft) => {
-        if(i.key == NftKeys.MARKET){
-          market = Buffer.from(i.value.slice(2), 'hex').toString('utf8')
+      let market;
+      item.token.nft.nftData.forEach((i: TNftDataElement) => {
+        if (i.key == NftKeys.MARKET) {
+          market = Buffer.from(i.value.slice(2), "hex").toString("utf8");
         }
-      })
+      });
       contracts[item.id] = {
         name: item.token.name,
         price: item.token.lastPriceValue,
@@ -60,6 +65,11 @@ export const getAllInterestingPredictionContracts = async (
         blocksPerEpoch: item.blocksPerEpoch,
         blocksPerSubscription: item.blocksPerSubscription,
         last_submitted_epoch: 0,
+        nftId: item.token.nft.id,
+        publishMarketFeeAddress: item.token.publishMarketFeeAddress,
+        publishMarketFeeAmount: item.token.publishMarketFeeAmount,
+        paymentCollector: item.token.paymentCollector,
+        publishMarketFeeToken: item.token.publishMarketFeeToken,
       };
     }
 
