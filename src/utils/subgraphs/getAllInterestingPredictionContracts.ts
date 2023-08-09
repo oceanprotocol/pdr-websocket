@@ -12,6 +12,9 @@ export type TPredictionContract = {
   address: string;
   price: number;
   market: string;
+  baseToken: string,
+  quoteToken: string,
+  interval: string,
   symbol: string;
   secondsPerEpoch: string;
   secondsPerSubscription: string;
@@ -50,16 +53,35 @@ export const getAllInterestingPredictionContracts = async (
     }
 
     for (const item of predictContracts) {
-      let market;
+      let market = '';
+      let baseToken = '';
+      let quoteToken = '';
+      let interval = '';
       item.token.nft.nftData.forEach((i: TNftDataElement) => {
-        if (i.key == NftKeys.MARKET) {
-          market = Buffer.from(i.value.slice(2), "hex").toString("utf8");
+        const valueHex = i.value.slice(2);
+        const decodedValue = Buffer.from(valueHex, 'hex').toString('utf8');
+        switch (i.key) {
+            case NftKeys.MARKET:
+                market = decodedValue;
+                break;
+            case NftKeys.BASE:
+                baseToken = decodedValue;
+                break;
+            case NftKeys.QUOTE:
+                quoteToken = decodedValue;
+                break;
+            case NftKeys.INTERVAL:
+                interval = decodedValue;
+                break;
         }
       });
       contracts[item.id] = {
         name: item.token.name,
         price: item.token.lastPriceValue,
         market: market,
+        baseToken: baseToken,
+        quoteToken: quoteToken,
+        interval: interval,
         address: item.id,
         symbol: item.token.symbol,
         secondsPerEpoch: item.secondsPerEpoch,

@@ -1,4 +1,5 @@
 import {
+  PREDICTION_FETCH_EPOCHS_DELAY,
   currentConfig,
   overlapBlockCount,
   predictoorWallet,
@@ -99,8 +100,11 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
         );
       });
     });
-
-    if (currentEpoch === latestEpoch) return;
+    if (
+      blockNumber - latestEpoch * BPE <
+      BPE + PREDICTION_FETCH_EPOCHS_DELAY
+    )
+      return
     //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
