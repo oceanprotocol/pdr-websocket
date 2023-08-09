@@ -14,7 +14,9 @@ Before setting up the PDR-Websocket project, make sure you have the following co
 
 ### Update env variables
 
-Check environment variables from .env.dev file and update them accordangly to your setup.
+Create a new file called '.env.local' and copy content from '.env.sample'
+
+Check environment variables from .env.sample file and update them accordangly to your setup.
 
 ### Update configs
 
