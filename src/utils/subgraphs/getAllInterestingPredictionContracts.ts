@@ -16,8 +16,8 @@ export type TPredictionContract = {
   quoteToken: string,
   interval: string,
   symbol: string;
-  blocksPerEpoch: string;
-  blocksPerSubscription: string;
+  secondsPerEpoch: string;
+  secondsPerSubscription: string;
   last_submitted_epoch: number;
   nftId: string;
   publishMarketFeeAddress: string;
@@ -84,8 +84,8 @@ export const getAllInterestingPredictionContracts = async (
         interval: interval,
         address: item.id,
         symbol: item.token.symbol,
-        blocksPerEpoch: item.blocksPerEpoch,
-        blocksPerSubscription: item.blocksPerSubscription,
+        secondsPerEpoch: item.secondsPerEpoch,
+        secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,
         nftId: item.token.nft.id,
         publishMarketFeeAddress: item.token.publishMarketFeeAddress,

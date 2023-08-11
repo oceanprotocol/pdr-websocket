@@ -3,7 +3,7 @@ import { TPredictionContract } from "../../utils/subgraphs/getAllInterestingPred
 
 export type TCheckAndSubscribeArgs = {
   predictoorContracts: Array<Predictoor>;
-  currentBlock: number;
+  currentTs: number;
   startedTransactions?: Array<string>;
 };
 

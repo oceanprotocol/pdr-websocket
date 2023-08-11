@@ -218,26 +218,26 @@ class Predictoor {
     );
     return formattedEpoch;
   }
-  // Get blocks per epoch
-  async getBlocksPerEpoch(): Promise<number> {
-    const blocksPerEpoch: BigNumber = await this.instance?.blocksPerEpoch();
-    const formattedBlocksPerEpoch: number = parseInt(
-      ethers.utils.formatUnits(blocksPerEpoch, 0)
-    );
-    return formattedBlocksPerEpoch;
+  // Get seconds per epoch
+  async getSecondsPerEpoch(): Promise<number> {
+    const secondsPerEpoch: BigNumber = await this.instance?.secondsPerEpoch()
+    const formattedSecondsPerEpoch: number = parseInt(
+      ethers.utils.formatUnits(secondsPerEpoch, 0)
+    )
+    return formattedSecondsPerEpoch
   }
 
-  async getCurrentEpochStartBlockNumber(blockNumber: number): Promise<number> {
-    const soonestBlockToPredict: BigNumber =
-      await this.instance?.railBlocknumToSlot(blockNumber);
-    const formattedSoonestBlockToPredict: number = parseInt(
-      ethers.utils.formatUnits(soonestBlockToPredict, 0)
-    );
-    return formattedSoonestBlockToPredict;
+  async getCurrentEpochStartTs(seconds: number): Promise<number> {
+    const soonestTsToPredict: BigNumber =
+      await this.instance?.toEpochStart(seconds)
+    const formattedSoonestTsToPredict: number = parseInt(
+      ethers.utils.formatUnits(soonestTsToPredict, 0)
+    )
+    return formattedSoonestTsToPredict
   }
 
   async getAggPredval(
-    block: number,
+    ts: number,
     user: ethers.Wallet,
     authorizationMessage: TAuthorizationUser
   ): Promise<TGetAggPredvalResult | null> {
@@ -245,7 +245,7 @@ class Predictoor {
       if (this.instance) {
         const [nom, denom] = await this.instance
           .connect(user)
-          .getAggPredval(block, authorizationMessage);
+          .getAggPredval(ts, authorizationMessage);
           const nominator = ethers.utils.formatUnits(nom, 18)
           const denominator = ethers.utils.formatUnits(denom, 18)
   

@@ -29,9 +29,9 @@ export const getPredictContracts = gql`
           }
         }
       }
-      blocksPerEpoch
-      blocksPerSubscription
-      truevalSubmitTimeoutBlock
+      secondsPerEpoch
+      secondsPerSubscription
+      truevalSubmitTimeout
     }
   }
 `;
@@ -68,9 +68,9 @@ type TPredictToken = {
 type TPredictContract = {
   id: string;
   token: TPredictToken;
-  blocksPerEpoch: string;
-  blocksPerSubscription: string;
-  truevalSubmitTimeoutBlock: number;
+  secondsPerEpoch: string;
+  secondsPerSubscription: string;
+  truevalSubmitTimeout: number;
 };
 
 export type TGetPredictContractsQueryResult = {

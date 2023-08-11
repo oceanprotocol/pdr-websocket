@@ -52,37 +52,40 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }),
     provider.getBlockNumber(),
   ]);
-
+  let block = await provider.getBlock(currentBlock);
+  let currentTs = block.timestamp
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
-    currentBlock,
+    currentTs,
   });
 
   createDataHolders({
     contracts: subscribedPredictoors.map((item) => item.predictorContract),
   });
 
-  const BPE =
-    await subscribedPredictoors[0]?.predictorContract.getBlocksPerEpoch();
+  const SPE =
+    await subscribedPredictoors[0]?.predictorContract.getSecondsPerEpoch();
 
   let startedTransactions: Array<string> = [];
 
   provider.on("block", async (blockNumber) => {
-    const currentEpoch = Math.floor(blockNumber / BPE);
-    const currentEpochStartBlockNumber =
-      await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartBlockNumber(
-        blockNumber
+    let block = await provider.getBlock(blockNumber);
+    let currentTs = block.timestamp;
+    const currentEpoch = Math.floor(currentTs / SPE);
+    const currentEpochStartTs =
+      await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartTs(
+        currentTs
       );
 
     const renewPredictoors = subscribedPredictoors.filter(
-      ({ expires }) => expires < blockNumber + overlapBlockCount
+      ({ expires }) => expires < currentTs + overlapBlockCount
     );
 
     checkAndSubscribe({
       predictoorContracts: renewPredictoors
         .map(({ predictorContract }) => predictorContract)
         .filter((item) => !startedTransactions.includes(item.address)),
-      currentBlock: blockNumber,
+      currentTs,
       startedTransactions: startedTransactions,
     }).then((renewedPredictoors) => {
       renewedPredictoors.forEach((renewedPredictoor) => {
@@ -97,24 +100,24 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
         );
       });
     });
+
     if (
-      blockNumber - latestEpoch * BPE <
-      BPE + PREDICTION_FETCH_EPOCHS_DELAY
+      currentTs - latestEpoch * SPE <
+      SPE + PREDICTION_FETCH_EPOCHS_DELAY
     )
       return
     //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
-
     const currentPredictorContracts = subscribedPredictoors.map(
       ({ predictorContract }) => predictorContract
     );
-    const predictionEpochs = calculatePredictionEpochs(currentEpoch, BPE);
+    const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
-      currentBlockNumber: blockNumber,
-      epochStartBlockNumber: currentEpochStartBlockNumber,
-      blocksPerEpoch: BPE,
+      currentTs,
+      epochStartTs: currentEpochStartTs,
+      secondsPerEpoch: SPE,
       epochs: predictionEpochs,
       contracts: currentPredictorContracts,
       authorizationInstance,
@@ -133,7 +136,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }));
 
     predValDataHolder.theFixedMessage = result;
-    console.log("newEpoch", JSON.stringify(result));
+    //console.log("newEpoch", JSON.stringify(result));
     io.emit("newEpoch", result);
   });
 };
