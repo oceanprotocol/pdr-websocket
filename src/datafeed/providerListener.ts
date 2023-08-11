@@ -100,15 +100,15 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
         );
       });
     });
+
     if (
-      blockNumber - latestEpoch * BPE <
-      BPE + PREDICTION_FETCH_EPOCHS_DELAY
+      currentTs - latestEpoch * SPE <
+      SPE + PREDICTION_FETCH_EPOCHS_DELAY
     )
       return
     //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
-
     const currentPredictorContracts = subscribedPredictoors.map(
       ({ predictorContract }) => predictorContract
     );
