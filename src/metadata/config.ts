@@ -52,8 +52,8 @@ export default {
   barge: {
     chainId: "8996",
     oceanAddress: "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
-    subgraph: process.env.DEV_AWS_URL
-      ? `${process.env.DEV_AWS_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
+    subgraph: process.env.DEV_GRAPHQL_URL
+      ? `${process.env.DEV_GRAPHQL_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
       : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: ["0x5466cc46354f55f0345c2cc3e9e3a65a4eeb31c6"],
     tokenPredictions: [
