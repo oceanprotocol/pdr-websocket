@@ -34,7 +34,7 @@ export const getMultipleAggPredValsByEpoch = ({
           )),
           epoch,
           currentTs,
-          epochStartTs,
+          epochStartTs: epoch,
           secondsPerEpoch,
         };
         predValDataHolder.setItemToContract(contract.address, predVal);
