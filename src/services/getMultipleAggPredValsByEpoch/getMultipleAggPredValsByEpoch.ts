@@ -7,7 +7,6 @@ import { TGetMultipleAggPredValsByEpochArgs } from "./getMultipleAggPredValsByEp
 
 export const getMultipleAggPredValsByEpoch = ({
   currentTs,
-  epochStartTs,
   secondsPerEpoch,
   epochs,
   contracts,
