@@ -55,7 +55,7 @@ export default {
     subgraph: process.env.DEV_GRAPHQL_URL
       ? `${process.env.DEV_GRAPHQL_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
       : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
-    opfProvidedPredictions: ["0x5466cc46354f55f0345c2cc3e9e3a65a4eeb31c6"],
+    opfProvidedPredictions: ["0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5"],
     tokenPredictions: [
       {
         blocks_per_epoch: 4000,
