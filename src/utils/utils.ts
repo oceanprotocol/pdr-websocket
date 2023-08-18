@@ -30,9 +30,9 @@ export const findContractMarketInConfig = (
 
 export const calculatePredictionEpochs = (
   currentEpoch: number,
-  BPE: number
+  SPE: number
 ): number[] => [
-  BPE * (currentEpoch - 1),
-  BPE * currentEpoch,
-  BPE * (currentEpoch + 1),
+  SPE * (currentEpoch - 1),
+  SPE * currentEpoch,
+  SPE * (currentEpoch + 1),
 ];

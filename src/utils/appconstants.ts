@@ -10,6 +10,7 @@ export const predictoorWallet = new ethers.Wallet(
 );
 
 export const overlapBlockCount = 100;
+export const PREDICTION_FETCH_EPOCHS_DELAY = 5;
 
 export const currentConfig = process.env.ENVIRONMENT
   ? config[process.env.ENVIRONMENT as keyof typeof config]

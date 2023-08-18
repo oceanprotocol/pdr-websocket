@@ -29,9 +29,9 @@ export const getPredictContracts = gql`
           }
         }
       }
-      blocksPerEpoch
-      blocksPerSubscription
-      truevalSubmitTimeoutBlock
+      secondsPerEpoch
+      secondsPerSubscription
+      truevalSubmitTimeout
     }
   }
 `;
@@ -39,6 +39,8 @@ export const getPredictContracts = gql`
 export enum NftKeys {
   MARKET = "0xf7e3126f87228afb82c9b18537eed25aaeb8171a78814781c26ed2cfeff27e69",
   INTERVAL = "0x49435d2ff85f9f3594e40e887943d562765d026d50b7383e76891f8190bff4c9",
+  BASE = '0xf1f3eb40f5bc1ad1344716ced8b8a0431d840b5783aea1fd01786bc26f35ac0f',
+  QUOTE = '0x238ad53218834f943da60c8bafd36c36692dcb35e6d76bdd93202f5c04c0baff'
 }
 
 export type TNftDataElement = {
@@ -66,9 +68,9 @@ type TPredictToken = {
 type TPredictContract = {
   id: string;
   token: TPredictToken;
-  blocksPerEpoch: string;
-  blocksPerSubscription: string;
-  truevalSubmitTimeoutBlock: number;
+  secondsPerEpoch: string;
+  secondsPerSubscription: string;
+  truevalSubmitTimeout: number;
 };
 
 export type TGetPredictContractsQueryResult = {

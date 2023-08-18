@@ -14,7 +14,7 @@ export const getContractsSubscription = async ({
   provider,
 }: TGetContractsSubscriptionArgs): Promise<TGetContractsSubscriptionResult | null> => {
   try {
-    const predictorContract = new Predictoor(predictoorProps.address, provider);
+    const predictorContract = new Predictoor(predictoorProps.address, provider, predictoorProps);
     await predictorContract.init();
 
     const subscription = await predictorContract.getSubscriptions(user.address);
