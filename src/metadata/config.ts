@@ -1,7 +1,6 @@
 export default {
   staging: {
     chainId: "23295",
-    oceanAddress: "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     subgraph:
       "https://v4.subgraph.goerli.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: [],
@@ -26,7 +25,6 @@ export default {
   },
   production: {
     chainId: "23295",
-    oceanAddress: "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     subgraph:
       "https://v4.subgraph.mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: [],
@@ -52,8 +50,8 @@ export default {
   barge: {
     chainId: "8996",
     oceanAddress: "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
-    subgraph: process.env.DEV_GRAPHQL_URL
-      ? `${process.env.DEV_GRAPHQL_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
+    subgraph: process.env.GRAPHQL_URL
+      ? `${process.env.GRAPHQL_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
       : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: ["0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5"],
     tokenPredictions: [
@@ -77,7 +75,6 @@ export default {
   },
   mock: {
     chainId: "23295",
-    oceanAddress: "0x4dD281EB67DED07E76E413Df16176D66ae69e240",
     subgraph:
       "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: [

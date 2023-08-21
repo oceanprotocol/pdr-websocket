@@ -7,7 +7,7 @@ type NetworkConfig = Record<NetworkNames, string>;
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: process.env.DEV_AWS_URL,
+  development: process.env.GANACHE_URL ? process.env.GANACHE_URL : 'http://172.15.0.15:8545',
   mock: "http://localhost:8545",
   testnet: "",
   mainnet: "",

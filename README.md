@@ -1,8 +1,9 @@
 # PDR-Websocket Project
 
-This is the PDR-Websocket project, a websockets server integrated into the Ocean protocol's network.
+This is the PDR-Websocket project, a websockets server that checks for specified Predictoor contracts, buys them based on the provided Private Key and sends the data to the clients.
 
 ## Prerequisites
+If you are running against Barge!
 
 Before setting up the PDR-Websocket project, make sure you have the following components running:
 
@@ -11,7 +12,40 @@ Before setting up the PDR-Websocket project, make sure you have the following co
 
 ## Setup
 
-### Building the Docker image
+### Update env variables
+
+Create a new file called '.env.local' and copy content from '.env.sample'
+
+Check environment variables from .env.sample file and update them accordangly to your setup.
+
+### Update configs
+
+- opfProvidedPredictions: List of Predictoor contracts that the app it's going to purchase subscriptions for, get the predictions and serve it to the client using socket connection.
+
+
+## Run the app
+
+### Standalone
+
+#### Install dependencies
+
+```bash
+npm i
+```
+
+#### Start the app
+
+```bash
+npm start
+# or
+yarn start
+# or
+pnpm start
+```
+
+### As docket container
+
+#### Building the Docker image
 
 In the project directory, build the Docker image with the following command:
 
@@ -21,7 +55,7 @@ docker build --build-arg NODE_ENV=development -t pdr-websocket .
 
 This command builds a Docker image for the PDR-Websocket project in development mode. The `-t` option tags our image with the name `pdr-websocket`.
 
-### Running the Docker container
+#### Running the Docker container
 
 After building the Docker image, run a container with this image using the following command:
 
