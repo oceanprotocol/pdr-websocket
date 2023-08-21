@@ -7,7 +7,6 @@ import { TGetMultipleAggPredValsByEpochArgs } from "./getMultipleAggPredValsByEp
 
 export const getMultipleAggPredValsByEpoch = ({
   currentTs,
-  epochStartTs,
   secondsPerEpoch,
   epochs,
   contracts,
@@ -34,7 +33,7 @@ export const getMultipleAggPredValsByEpoch = ({
           )),
           epoch,
           currentTs,
-          epochStartTs,
+          epochStartTs: epoch,
           secondsPerEpoch,
         };
         predValDataHolder.setItemToContract(contract.address, predVal);

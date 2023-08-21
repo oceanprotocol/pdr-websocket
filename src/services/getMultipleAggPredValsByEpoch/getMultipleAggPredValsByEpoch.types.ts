@@ -3,7 +3,6 @@ import { initializeAutorization } from "../initializeAuthorization";
 
 export type TGetMultipleAggPredValsByEpochArgs = {
   currentTs: number;
-  epochStartTs: number;
   secondsPerEpoch: number;
   epochs: Array<number>;
   contracts: Array<Predictoor>;

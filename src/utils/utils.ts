@@ -32,6 +32,7 @@ export const calculatePredictionEpochs = (
   currentEpoch: number,
   SPE: number
 ): number[] => [
+  SPE * (currentEpoch - 2),
   SPE * (currentEpoch - 1),
   SPE * currentEpoch,
   SPE * (currentEpoch + 1),
