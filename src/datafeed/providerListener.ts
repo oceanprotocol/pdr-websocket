@@ -71,6 +71,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   let startedTransactions: Array<string> = [];
 
   provider.on("block", async (blockNumber) => {
+
     const block = await provider.getBlock(blockNumber);
     const currentTs = block.timestamp;
     const currentEpoch = Math.floor(currentTs / SPE);
@@ -130,7 +131,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }));
 
     predValDataHolder.theFixedMessage = result;
-    //console.log("newEpoch", JSON.stringify(result));
+    console.log("newEpoch", JSON.stringify(result));
     io.emit("newEpoch", result);
   });
 };
