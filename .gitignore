@@ -134,3 +134,5 @@ build
 src/utils/logs.txt
 
 .DS_Store
+
+.env.*

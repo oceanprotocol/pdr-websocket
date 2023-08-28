@@ -1,10 +1,12 @@
+import { ethers } from "ethers";
+
 export type TInitializeAutorizationArgs = {
-  walletAddress: string;
+  wallet: ethers.Wallet;
 };
 
 export type TAuthorizationUser = {
   userAddress: string;
-  v: string;
+  v: number | string;
   r: string;
   s: string;
   validUntil: number;

@@ -42,7 +42,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   const [contracts, authorizationInstance] = await Promise.all([
     getAllInterestingPredictionContracts(currentConfig.subgraph),
     initializeAutorization({
-      walletAddress: predictoorWallet.address,
+      wallet: predictoorWallet,
     }),
   ]);
 
@@ -52,8 +52,10 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     }),
     provider.getBlockNumber(),
   ]);
-  let block = await provider.getBlock(currentBlock);
-  let currentTs = block.timestamp
+
+  const block = await provider.getBlock(currentBlock);
+  const currentTs = block.timestamp;
+    
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
     currentTs,
@@ -69,8 +71,8 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   let startedTransactions: Array<string> = [];
 
   provider.on("block", async (blockNumber) => {
-    let block = await provider.getBlock(blockNumber);
-    let currentTs = block.timestamp;
+    const block = await provider.getBlock(blockNumber);
+    const currentTs = block.timestamp;
     const currentEpoch = Math.floor(currentTs / SPE);
     const currentEpochStartTs =
       await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartTs(
@@ -101,11 +103,8 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
       });
     });
 
-    if (
-      currentTs - latestEpoch * SPE <
-      SPE + PREDICTION_FETCH_EPOCHS_DELAY
-    )
-      return
+    if (currentTs - latestEpoch * SPE < SPE + PREDICTION_FETCH_EPOCHS_DELAY)
+      return;
     //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;

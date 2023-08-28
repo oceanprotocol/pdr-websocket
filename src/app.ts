@@ -22,8 +22,6 @@ const io = new Server(httpServer, {
   path: "/api/datafeed",
 });
 
-
-
 app.use(express.json());
 app.use("/api/v1", v1router);
 errorHandler(app);

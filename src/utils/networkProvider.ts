@@ -1,42 +1,46 @@
-import { ethers } from "ethers";
-import networksData from "../metadata/networks.json";
+import { ethers } from 'ethers'
+import networksData from '../metadata/networks.json'
 
-type NetworkNames = "development" | "mock" | "testnet" | "mainnet";
+type NetworkNames = 'barge' | 'staging' | 'mainnet'
 
-type NetworkConfig = Record<NetworkNames, string>;
+type NetworkConfig = Record<NetworkNames, string>
 
 // Define your network configuration mapping the env variable to the network URL
 const networkConfig: NetworkConfig = {
-  development: process.env.DEV_AWS_URL,
-  mock: "http://localhost:8545",
-  testnet: "",
-  mainnet: "",
-};
+  barge: process.env.DEV_AWS_URL || 'http://localhost:8545',
+  staging: 'https://testnet.sapphire.oasis.dev',
+  mainnet: ''
+}
 
 class NetworkProvider {
-  provider: ethers.providers.JsonRpcProvider;
+  provider: ethers.providers.JsonRpcProvider
 
   constructor() {
-    const env = process.env.ENVIRONMENT || "development";
-    const networkURL =
-      networkConfig[env as NetworkNames] || networkConfig["development"];
+    const env = process.env.ENVIRONMENT || 'barge'
 
-    this.provider = new ethers.providers.JsonRpcProvider(networkURL);
+    const networkURL =
+      networkConfig[env as NetworkNames] || networkConfig['barge']
+
+    this.provider = new ethers.providers.JsonRpcProvider(networkURL)
+  }
+
+  async init() {
+    await this.provider.send('eth_accounts', [])
   }
 
   getProvider() {
-    return this.provider;
+    return this.provider
   }
 
   getNetworkName(chainId: number): string | undefined {
-    return networksData.find((data) => data.chainId == chainId)?.name;
+    return networksData.find((data) => data.chainId == chainId)?.name
   }
 
   getSigner(address: string) {
-    return this.provider.getSigner(address);
+    return this.provider.getSigner(address)
   }
 }
 
-const networkProvider = new NetworkProvider();
+const networkProvider = new NetworkProvider()
 
-export { networkProvider };
+export { networkProvider }
