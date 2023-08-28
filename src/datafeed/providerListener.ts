@@ -74,10 +74,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
     const block = await provider.getBlock(blockNumber);
     const currentTs = block.timestamp;
     const currentEpoch = Math.floor(currentTs / SPE);
-    const currentEpochStartTs =
-      await subscribedPredictoors[0]?.predictorContract.getCurrentEpochStartTs(
-        currentTs
-      );
 
     const renewPredictoors = subscribedPredictoors.filter(
       ({ expires }) => expires < currentTs + overlapBlockCount
@@ -115,7 +111,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentTs,
-      epochStartTs: currentEpochStartTs,
       secondsPerEpoch: SPE,
       epochs: predictionEpochs,
       contracts: currentPredictorContracts,
