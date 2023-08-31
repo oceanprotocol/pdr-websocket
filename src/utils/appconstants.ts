@@ -1,4 +1,4 @@
-import config from "../metadata/config";
+import { config } from "../metadata/config";
 import { ethers } from "ethers";
 import { networkProvider } from "./networkProvider";
 

@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from "ethers";
-import { getEventFromTx, stringToBytes32 } from "../utils";
+import { getEventFromTx, isSapphireNetwork, stringToBytes32 } from "../utils";
 import {
+  TFreParams,
   TGetAggPredvalResult,
   TGetSubscriptions,
   TProviderFee,
@@ -8,10 +9,11 @@ import {
 import FixedRateExchange from "./FixedRateExchange";
 import Token from "./Token";
 import { ERC20Template3ABI } from "../../metadata/abis/ERC20Template3ABI";
-import { signHash } from "../signHash";
+import { signHash, signHashWithUser } from "../signHash";
 import { TAuthorizationUser } from "../../services/initializeAuthorization";
 import { TPredictionContract } from "../subgraphs/getAllInterestingPredictionContracts";
 import { networkProvider } from "../networkProvider";
+import { PromiseReturnType } from "../utilitytypes";
 // Predictoor class
 class Predictoor {
   public provider: ethers.providers.JsonRpcProvider;
@@ -67,13 +69,14 @@ class Predictoor {
   }
   // Calculate provider fee
   async getCalculatedProviderFee(user: ethers.Wallet): Promise<TProviderFee> {
-    const fastBlockNumber = await networkProvider.getProvider()._getFastBlockNumber();
+    const fastBlockNumber = await networkProvider
+      .getProvider()
+      ._getFastBlockNumber();
     const userAddress = await user.getAddress();
     const providerData = JSON.stringify({
-      timeout: 0
+      timeout: 0,
     });
 
-    
     const providerFeeToken = ethers.constants.AddressZero;
     const providerFeeAmount = 0;
     const providerValidUntil = 0;
@@ -89,7 +92,7 @@ class Predictoor {
       ]
     );
     // Sign the message
-    const { v, r, s } = await signHash(userAddress, message);
+    const { v, r, s } = await signHashWithUser(user, message);
 
     return {
       providerFeeAddress: userAddress,
@@ -118,6 +121,20 @@ class Predictoor {
       },
     };
   }
+
+  async getBuyFromFreGasLimit(
+    user: ethers.Wallet,
+    orderParams: PromiseReturnType<typeof this.getOrderParams>,
+    freParams: TFreParams
+  ): Promise<BigNumber> {
+    const isBarge = process.env.ENVIRONMENT === "barge";
+    return isBarge
+      ? (await networkProvider.getProvider().getBlock("latest")).gasLimit
+      : this.instance
+          .connect(user)
+          .estimateGas.buyFromFreAndOrder(orderParams, freParams);
+  }
+
   // Buy from Fixed Rate Exchange (FRE) and order
   async buyFromFreAndOrder(
     user: ethers.Wallet,
@@ -125,7 +142,9 @@ class Predictoor {
     baseTokenAmount: string
   ): Promise<ethers.ContractReceipt | Error> {
     try {
+      console.log("buyFromFreAndOrder");
       const orderParams = await this.getOrderParams(user);
+
       const freParams = {
         exchangeContract: this.FRE.address,
         exchangeId,
@@ -135,28 +154,19 @@ class Predictoor {
       };
       // Get gas price and limit
       const gasPrice = await this.provider.getGasPrice();
-      //let gasLimit = await this.instance
-      //  .connect(user)
-      //  .estimateGas.buyFromFreAndOrder(orderParams, freParams);
-      // Check if gas limit is below minimum and adjust if necessary
-
-      //console.log("gasLimit", gasLimit.toString());
-      /*
-      if (process.env.ENVIRONMENT === "barge" && process.env.MIN_GAS_PRICE) {
-        const minGasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE));
-        if (gasLimit.lt(minGasLimit)) gasLimit = minGasLimit;
-      }*/
-      //const gasLimit = BigNumber.from(parseInt(process.env.MIN_GAS_PRICE));
-      const latestGasLimit = (await networkProvider.getProvider().getBlock('latest')).gasLimit
-      
-     
+      const gasLimit = await this.getBuyFromFreGasLimit(
+        user,
+        orderParams,
+        freParams
+      );
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit: latestGasLimit,
+          gasLimit,
           gasPrice,
         });
+
       const receipt = await tx.wait();
 
       return receipt;
@@ -220,20 +230,21 @@ class Predictoor {
   }
   // Get seconds per epoch
   async getSecondsPerEpoch(): Promise<number> {
-    const secondsPerEpoch: BigNumber = await this.instance?.secondsPerEpoch()
+    const secondsPerEpoch: BigNumber = await this.instance?.secondsPerEpoch();
     const formattedSecondsPerEpoch: number = parseInt(
       ethers.utils.formatUnits(secondsPerEpoch, 0)
-    )
-    return formattedSecondsPerEpoch
+    );
+    return formattedSecondsPerEpoch;
   }
 
   async getCurrentEpochStartTs(seconds: number): Promise<number> {
-    const soonestTsToPredict: BigNumber =
-      await this.instance?.toEpochStart(seconds)
+    const soonestTsToPredict: BigNumber = await this.instance?.toEpochStart(
+      seconds
+    );
     const formattedSoonestTsToPredict: number = parseInt(
       ethers.utils.formatUnits(soonestTsToPredict, 0)
-    )
-    return formattedSoonestTsToPredict
+    );
+    return formattedSoonestTsToPredict;
   }
 
   async getAggPredval(
@@ -246,25 +257,27 @@ class Predictoor {
         const [nom, denom] = await this.instance
           .connect(user)
           .getAggPredval(ts, authorizationMessage);
-          const nominator = ethers.utils.formatUnits(nom, 18)
-          const denominator = ethers.utils.formatUnits(denom, 18)
-  
-          let confidence: number = parseFloat(nominator) / parseFloat(denominator)
-          let dir: number = confidence >= 0.5 ? 1 : 0
-          if (confidence > 0.5) {
-            confidence -= 0.5
-          } else {
-            confidence = 0.5 - confidence
-          }
-          confidence = (confidence / 0.5) * 100
-  
-          return {
-            nom: nominator,
-            denom: denominator,
-            confidence: confidence,
-            dir: dir,
-            stake: parseFloat(ethers.utils.formatUnits(denom, 18))
-          }
+
+        const nominator = ethers.utils.formatUnits(nom, 18);
+        const denominator = ethers.utils.formatUnits(denom, 18);
+
+        let confidence: number =
+          parseFloat(nominator) / parseFloat(denominator);
+        let dir: number = confidence >= 0.5 ? 1 : 0;
+        if (confidence > 0.5) {
+          confidence -= 0.5;
+        } else {
+          confidence = 0.5 - confidence;
+        }
+        confidence = (confidence / 0.5) * 100;
+
+        return {
+          nom: nominator,
+          denom: denominator,
+          confidence: confidence,
+          dir: dir,
+          stake: parseFloat(ethers.utils.formatUnits(denom, 18)),
+        };
       }
       return null;
     } catch (e) {

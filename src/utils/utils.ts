@@ -18,16 +18,6 @@ export function stringToBytes32(data: string): string {
   return ethers.utils.hexZeroPad(hexData, 32);
 }
 
-export const findContractMarketInConfig = (
-  tokenName: string,
-  pairName: string
-): string | undefined =>
-  currentConfig.tokenPredictions.find(
-    (tokenPrediction) =>
-      tokenPrediction.tokenName === tokenName &&
-      tokenPrediction.pairName === pairName
-  )?.exchange;
-
 export const calculatePredictionEpochs = (
   currentEpoch: number,
   SPE: number
@@ -37,3 +27,6 @@ export const calculatePredictionEpochs = (
   SPE * currentEpoch,
   SPE * (currentEpoch + 1),
 ];
+
+export const isSapphireNetwork = (): boolean =>
+  currentConfig.chainId === "23295";

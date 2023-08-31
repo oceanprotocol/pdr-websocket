@@ -14,8 +14,8 @@ export type TProviderFee = {
   v: number | string;
   r: number | string;
   s: number | string;
-  validUntil: number | string
-  providerData: number | string
+  validUntil: number | string;
+  providerData: number | string;
 };
 
 export type TGetAggPredvalResult = {
@@ -29,4 +29,12 @@ export type TGetAggPredvalResult = {
 export type TGetSubscriptions = {
   user: string;
   expires: ethers.BigNumber;
+};
+
+export type TFreParams = {
+  exchangeContract: string;
+  exchangeId: string;
+  maxBaseTokenAmount: ethers.BigNumber;
+  swapMarketFee: number;
+  marketFeeAddress: string;
 };

@@ -33,6 +33,7 @@ export const getAllInterestingPredictionContracts = async (
   const contractAddresses = currentConfig.opfProvidedPredictions;
   let offset = 0;
   const contracts: Record<string, TPredictionContract> = {};
+  console.log("contractAddresses", contractAddresses);
   const whileValue = true;
   while (whileValue) {
     const variables = {
