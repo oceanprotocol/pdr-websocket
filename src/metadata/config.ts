@@ -28,7 +28,7 @@ export const config: TRuntimeConfig = {
         market: "univ3",
       },
     ],
-    opfProvidedPredictions: ['0xe680c56153a00dd28cfe68ed56537c9392f5705a'],
+    opfProvidedPredictions: ['0xdbc83c9e8088c25e2375f3c7449fc0d913934784'],
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
   },
   production: {
