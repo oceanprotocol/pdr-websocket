@@ -27,12 +27,12 @@ export class AuthorizationData<T extends BaseAuthData> {
 
   /**
    * Checks if the authorization data is close to expiration
-   * @returns True if the data is close to expiration, false otherwise
+   * @returns {boolean} True if the data is close to expiration, false otherwise
    */
   public isCloseToExpire(): boolean {
-    const currentTime = Date.now() / 100;
+    const currentTime = Math.floor(Date.now() / 1000);
     const timeToExpire = this.validUntil - 60 * 5;
-    return currentTime > timeToExpire;
+    return currentTime < timeToExpire;
   }
 
   /**
