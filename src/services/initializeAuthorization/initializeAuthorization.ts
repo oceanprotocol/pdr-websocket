@@ -21,7 +21,7 @@ export const initializeAutorization = async ({
   // Create an instance of AuthorizationData with the initial data and a createCallback function that authorizes the wallet address with a 24-hour expiration time.
   const authorizationDataInstance = new AuthorizationData<TAuthorizationUser>({
     initialData,
-    createCallback: () => authorize(wallet, 86400),
+    createCallback: () => authorize(wallet, 86400)
   });
   return authorizationDataInstance;
 };
