@@ -27,13 +27,13 @@ export type TPredictionContract = {
 };
 
 export const getAllInterestingPredictionContracts = async (
-  subgraphURL: string
+  contractAddresses: string[]
 ): Promise<Record<string, TPredictionContract>> => {
   const chunkSize = 1000;
-  const contractAddresses = currentConfig.opfProvidedPredictions;
+  //const contractAddresses = currentConfig.opfProvidedPredictions;
   let offset = 0;
   const contracts: Record<string, TPredictionContract> = {};
-  console.log("contractAddresses", contractAddresses);
+
   const whileValue = true;
   while (whileValue) {
     const variables = {

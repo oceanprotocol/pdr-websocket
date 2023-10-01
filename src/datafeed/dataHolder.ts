@@ -1,7 +1,9 @@
+import { TOpfProvidedPredictions } from "../metadata/config";
 import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
+import { ValueOf } from "../utils/utilitytypes";
 import { TProviderListenerEmitData } from "./providerListener";
 
-class DataHolder<T, U> {
+class DataHolder<T, U extends Record<string, unknown>> {
   private data: { [key: string]: Array<T> };
   public theFixedMessage: U;
 
@@ -46,6 +48,13 @@ class DataHolder<T, U> {
   get allData(): { [key: string]: Array<T> } {
     return this.data;
   }
+
+  public setFixedMessage(timeframe: keyof U, message: ValueOf<U>): void {
+    this.theFixedMessage = {
+      ...this.theFixedMessage,
+      [timeframe]: message,
+    };
+  }
 }
 
 type TPredValDataHolderItem = TGetAggPredvalResult & {
@@ -53,7 +62,7 @@ type TPredValDataHolderItem = TGetAggPredvalResult & {
 };
 const predValDataHolder = new DataHolder<
   TPredValDataHolderItem,
-  TProviderListenerEmitData
+  Record<keyof TOpfProvidedPredictions, TProviderListenerEmitData>
 >();
 
 export { DataHolder, TPredValDataHolderItem, predValDataHolder };

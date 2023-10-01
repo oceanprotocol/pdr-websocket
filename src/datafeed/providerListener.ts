@@ -20,11 +20,14 @@ import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { predValDataHolder } from "./dataHolder";
 import { calculatePredictionEpochs } from "../utils/utils";
 import { initializeAutorization } from "../services/initializeAuthorization";
+import { TOpfProvidedPredictions } from "../metadata/config";
 
 let latestEpoch = 0;
 
 type TProviderListenerArgs = {
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  contractAddresses: string[];
+  timeframe: keyof TOpfProvidedPredictions;
 };
 
 export type TProviderListenerEmitData = Array<{
@@ -37,10 +40,14 @@ export type TProviderListenerEmitData = Array<{
   contractInfo: TPredictionContract;
 }>;
 
-export const providerListener = async ({ io }: TProviderListenerArgs) => {
+export const providerListener = async ({
+  io,
+  contractAddresses,
+  timeframe,
+}: TProviderListenerArgs) => {
   const provider = networkProvider.getProvider();
   const [contracts, authorizationInstance] = await Promise.all([
-    getAllInterestingPredictionContracts(currentConfig.subgraph),
+    getAllInterestingPredictionContracts(contractAddresses),
     initializeAutorization({
       wallet: predictoorWallet,
     }),
@@ -55,7 +62,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
 
   const block = await provider.getBlock(currentBlock);
   const currentTs = block.timestamp;
-    
+
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
     currentTs,
@@ -71,7 +78,6 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
   let startedTransactions: Array<string> = [];
 
   provider.on("block", async (blockNumber) => {
-
     const block = await provider.getBlock(blockNumber);
     const currentTs = block.timestamp;
     const currentEpoch = Math.floor(currentTs / SPE);
@@ -130,7 +136,7 @@ export const providerListener = async ({ io }: TProviderListenerArgs) => {
       contractInfo: contracts[predictorContract.address],
     }));
 
-    predValDataHolder.theFixedMessage = result;
+    predValDataHolder.setFixedMessage(timeframe, result);
     console.log("newEpoch", JSON.stringify(result));
     io.emit("newEpoch", result);
   });

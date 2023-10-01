@@ -10,6 +10,7 @@ import { corsCheck } from "./utils/corsCheck";
 import { v1router } from "./routes/v1";
 import { newSubscriberListener } from "./datafeed/newSubscriberListener";
 import { logStream } from "./utils/logStream";
+import { ioServerRunner } from "./services/ioServerRunner";
 
 if (process.env.NODE_ENV === "development") {
   logStream();
@@ -18,21 +19,14 @@ if (process.env.NODE_ENV === "development") {
 const app = express();
 corsCheck(app);
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  path: "/api/datafeed",
+
+ioServerRunner({
+  httpServer,
 });
 
 app.use(express.json());
 app.use("/api/v1", v1router);
 errorHandler(app);
-
-newSubscriberListener({
-  io,
-});
-
-providerListener({
-  io,
-});
 
 const PORT = process.env.PORT || 3000;
 
