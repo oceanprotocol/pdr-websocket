@@ -2,7 +2,7 @@ import { Maybe } from "graphql/jsutils/Maybe";
 
 export type TRunEnvironments = "staging" | "production" | "barge";
 
-export type TTimeFrames = "5m" //| "1h";
+export type TTimeFrames = "5m" | "1h";
 export type TOpfProvidedPredictions = Record<TTimeFrames, Maybe<Array<string>>>;
 export type TRuntimeConfig = Record<
   TRunEnvironments,
@@ -35,7 +35,7 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: {
       "5m": ["0xda1e3c0ac74f2f10bb0c7635c9dc68bd3da0c95b"],
-      //"1h": ["0xc2c5c790b411a835742ed0d517df68fea958058d"],
+      "1h": ["0xc2c5c790b411a835742ed0d517df68fea958058d"],
     },
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
   },
@@ -53,7 +53,7 @@ export const config: TRuntimeConfig = {
     ],
     opfProvidedPredictions: {
       "5m": null,
-      //"1h": null,
+      "1h": null,
     },
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
   },
@@ -65,7 +65,7 @@ export const config: TRuntimeConfig = {
       : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: {
       "5m": ["0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5"],
-      //"1h": null,
+      "1h": null,
     },
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
     tokenPredictions: [
@@ -78,9 +78,17 @@ export const config: TRuntimeConfig = {
   },
 };
 
-export type TDataFeedPaths = Record<keyof TOpfProvidedPredictions, string>;
+export enum EEpochEmitterNames {
+  e_5m = "newEpoch-5m",
+  e_1h = "newEpoch-1h",
+}
 
-export const dataFeedPaths: TDataFeedPaths = {
-  "5m": "api/datafeed/5m",
-  //"1h": "api/datafeed/1h",
+export type TEpochEmitters = Record<
+  keyof TOpfProvidedPredictions,
+  EEpochEmitterNames
+>;
+
+export const epochEmitters: TEpochEmitters = {
+  "5m": EEpochEmitterNames.e_5m,
+  "1h": EEpochEmitterNames.e_1h,
 };

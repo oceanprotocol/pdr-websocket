@@ -1,4 +1,7 @@
-import { TOpfProvidedPredictions } from "../metadata/config";
+import {
+  EEpochEmitterNames,
+  TOpfProvidedPredictions,
+} from "../metadata/config";
 import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { ValueOf } from "../utils/utilitytypes";
 import { TProviderListenerEmitData } from "./providerListener";
@@ -55,6 +58,10 @@ class DataHolder<T, U extends Record<string, unknown>> {
       [timeframe]: message,
     };
   }
+
+  public getFixedMessage(timeframe: keyof U): ValueOf<U> {
+    return this.theFixedMessage[timeframe];
+  }
 }
 
 type TPredValDataHolderItem = TGetAggPredvalResult & {
@@ -62,7 +69,7 @@ type TPredValDataHolderItem = TGetAggPredvalResult & {
 };
 const predValDataHolder = new DataHolder<
   TPredValDataHolderItem,
-  Record<keyof TOpfProvidedPredictions, TProviderListenerEmitData>
+  Record<EEpochEmitterNames, TProviderListenerEmitData>
 >();
 
 export { DataHolder, TPredValDataHolderItem, predValDataHolder };

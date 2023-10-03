@@ -20,14 +20,14 @@ import { TGetAggPredvalResult } from "../utils/contracts/ContractReturnTypes";
 import { predValDataHolder } from "./dataHolder";
 import { calculatePredictionEpochs } from "../utils/utils";
 import { initializeAutorization } from "../services/initializeAuthorization";
-import { TOpfProvidedPredictions } from "../metadata/config";
+import { EEpochEmitterNames } from "../metadata/config";
 
 let latestEpoch = 0;
 
 type TProviderListenerArgs = {
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   contractAddresses: string[];
-  timeframe: keyof TOpfProvidedPredictions;
+  epochEmitterName: EEpochEmitterNames
 };
 
 export type TProviderListenerEmitData = Array<{
@@ -43,7 +43,7 @@ export type TProviderListenerEmitData = Array<{
 export const providerListener = async ({
   io,
   contractAddresses,
-  timeframe,
+  epochEmitterName,
 }: TProviderListenerArgs) => {
   const provider = networkProvider.getProvider();
   const [contracts, authorizationInstance] = await Promise.all([
@@ -136,8 +136,8 @@ export const providerListener = async ({
       contractInfo: contracts[predictorContract.address],
     }));
 
-    predValDataHolder.setFixedMessage(timeframe, result);
-    console.log("newEpoch", JSON.stringify(result));
-    io.emit("newEpoch", result);
+    predValDataHolder.setFixedMessage(epochEmitterName, result);
+    console.log(epochEmitterName, JSON.stringify(result));
+    io.emit(epochEmitterName, result);
   });
 };
