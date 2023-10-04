@@ -10,7 +10,7 @@ export const initialData = async (
     // Send a JSON response
     if (predValDataHolder.theFixedMessage) {
       console.log('----initial-data----', predValDataHolder.theFixedMessage)
-      res.status(200).json(JSON.stringify(predValDataHolder.theFixedMessage));
+      res.status(200).json(predValDataHolder.theFixedMessage);
       return;
     }
     next(new Error("No data available"));
