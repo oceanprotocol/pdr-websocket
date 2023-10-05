@@ -137,7 +137,6 @@ export const providerListener = async ({
     }));
 
     predValDataHolder.setFixedMessage(epochEmitterName, result);
-    console.log(epochEmitterName, JSON.stringify(result));
     io.emit('newEpoch', result);
   });
 };
