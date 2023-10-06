@@ -6,6 +6,7 @@
   "scripts": {
     "start": "env-cmd -f ./.env.local nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
     "staging": "env-cmd -f ./.env.staging nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
+    "production": "env-cmd -f ./.env.production nodemon --watch 'src/**/*.ts' --exec ts-node src/app.ts",
     "create": "plop",
     "build-dev": "tsc -p tsconfig.json",
     "start-dev": "NODE_ENV=dev node build/app.js",
