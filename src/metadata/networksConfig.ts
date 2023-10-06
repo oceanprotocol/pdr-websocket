@@ -1,4 +1,4 @@
-export const oasis = {
+export const oasisTesnet = {
   id: 23295,
   name: 'Oasis Sapphire Testnet',
   network: 'Oasis Sapphire Testnet',
@@ -19,6 +19,31 @@ export const oasis = {
     default: {
       name: 'SapphireTestnet',
       url: 'https://testnet.explorer.sapphire.oasis.dev'
+    }
+  }
+}
+
+export const oasis = {
+  id: 23295,
+  name: 'Oasis Sapphire Testnet',
+  network: 'Oasis Sapphire Testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Oasis Network',
+    symbol: 'ROSE'
+  },
+  rpcUrls: {
+    public: { http: ['https://sapphire.oasis.io'] },
+    default: { http: ['https://sapphire.oasis.io'] }
+  },
+  blockExplorers: {
+    etherscan: {
+      name: 'SapphireTestnet',
+      url: 'https://explorer.sapphire.oasis.io'
+    },
+    default: {
+      name: 'SapphireTestnet',
+      url: 'https://explorer.sapphire.oasis.io'
     }
   }
 }
