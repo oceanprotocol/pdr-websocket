@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import networksData from '../metadata/networks.json'
 
-type NetworkNames = 'barge' | 'staging' | 'mainnet'
+type NetworkNames = 'barge' | 'staging' | 'production'
 
 type NetworkConfig = Record<NetworkNames, string>
 
@@ -9,7 +9,7 @@ type NetworkConfig = Record<NetworkNames, string>
 const networkConfig: NetworkConfig = {
   barge: process.env.DEV_AWS_URL || 'http://localhost:8545',
   staging: 'https://testnet.sapphire.oasis.dev',
-  mainnet: ''
+  production: 'https://sapphire.oasis.io'
 }
 
 class NetworkProvider {

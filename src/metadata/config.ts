@@ -40,10 +40,10 @@ export const config: TRuntimeConfig = {
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
   },
   production: {
-    chainId: "23295",
-    oceanTokenAddress: "0x973e69303259b0c2543a38665122b773d28405fb",
+    chainId: "23294",
+    oceanTokenAddress: "0x39d22b78a7651a76ffbde2aaab5fd92666aca520",
     subgraph:
-      "https://v4.subgraph.sapphire-testnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph",
+    'https://v4.subgraph.sapphire-mainnet.oceanprotocol.com/subgraphs/name/oceanprotocol/ocean-subgraph',
     tokenPredictions: [
       {
         tokenName: "ETH",
@@ -52,10 +52,10 @@ export const config: TRuntimeConfig = {
       },
     ],
     opfProvidedPredictions: {
-      "5m": null,
-      "1h": null,
+      "5m": ['0xe66421fd29fc2d27d0724f161f01b8cbdcd69690'],
+      "1h": ['0x8165caab33131a4ddbf7dc79f0a8a4920b0b2553'],
     },
-    opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
+    opfOwnerAddress: "0x4ac2e51f9b1b0ca9e000dfe6032b24639b172703",
   },
   barge: {
     chainId: "8996",
