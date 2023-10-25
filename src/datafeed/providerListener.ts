@@ -63,17 +63,17 @@ export const providerListener = async ({
   const block = await provider.getBlock(currentBlock);
   const currentTs = block.timestamp;
 
+  const SPE =
+  await predictoorContracts[0]?.getSecondsPerEpoch();
+
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
-    currentTs,
+    currentEpoch: currentTs / SPE,
   });
 
   createDataHolders({
     contracts: subscribedPredictoors.map((item) => item.predictorContract),
   });
-
-  const SPE =
-    await subscribedPredictoors[0]?.predictorContract.getSecondsPerEpoch();
 
   let startedTransactions: Array<string> = [];
 
@@ -90,7 +90,7 @@ export const providerListener = async ({
       predictoorContracts: renewPredictoors
         .map(({ predictorContract }) => predictorContract)
         .filter((item) => !startedTransactions.includes(item.address)),
-      currentTs,
+      currentEpoch,
       startedTransactions: startedTransactions,
     }).then((renewedPredictoors) => {
       renewedPredictoors.forEach((renewedPredictoor) => {

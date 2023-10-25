@@ -7,7 +7,7 @@ import { overlapBlockCount, predictoorWallet } from "../../utils/appconstants";
 
 export const checkAndSubscribe = async ({
   predictoorContracts,
-  currentTs,
+  currentEpoch,
   startedTransactions,
 }: TCheckAndSubscribeArgs): Promise<TCheckAndSubscribeResult> =>
   await Promise.all(
@@ -19,7 +19,7 @@ export const checkAndSubscribe = async ({
       );
 
       let expirationTs = subscription.expires.toNumber();
-      const isValid = expirationTs > currentTs;
+      const isValid = expirationTs > currentEpoch;
 
       if (!isValid) {
         await predictorContract.buyAndStartSubscription(predictoorWallet);
