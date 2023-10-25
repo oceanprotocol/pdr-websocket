@@ -68,7 +68,7 @@ export const providerListener = async ({
 
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
-    currentEpoch: currentTs / SPE,
+    currentEpoch: Math.floor(currentTs / SPE) * SPE,
   });
 
   createDataHolders({
@@ -90,7 +90,7 @@ export const providerListener = async ({
       predictoorContracts: renewPredictoors
         .map(({ predictorContract }) => predictorContract)
         .filter((item) => !startedTransactions.includes(item.address)),
-      currentEpoch,
+      currentEpoch: currentEpoch * SPE,
       startedTransactions: startedTransactions,
     }).then((renewedPredictoors) => {
       renewedPredictoors.forEach((renewedPredictoor) => {
