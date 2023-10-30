@@ -19,18 +19,19 @@ export const checkAndSubscribe = async ({
       );
 
       let expirationTs = subscription.expires.toNumber();
-      const isValid = expirationTs > currentEpoch;
+      let isValid = expirationTs > currentEpoch;
 
-      if (!isValid) {
+     if (!isValid) {
         await predictorContract.buyAndStartSubscription(predictoorWallet);
         const subscription = await predictorContract.getSubscriptions(
           predictoorWallet.address
         );
-
+        if(subscription) isValid = true
         expirationTs = subscription.expires.toNumber();
       }
 
       return {
+        active: isValid,
         predictorContract,
         expires: expirationTs,
       };

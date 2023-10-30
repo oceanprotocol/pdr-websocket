@@ -8,6 +8,7 @@ export type TCheckAndSubscribeArgs = {
 };
 
 export type TCheckAndSubscribeResult = Array<{
+  active: boolean,
   predictorContract: Predictoor;
   expires: number;
 }>;

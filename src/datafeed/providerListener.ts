@@ -4,7 +4,7 @@ import {
   overlapBlockCount,
   predictoorWallet,
 } from "../utils/appconstants";
-import { checkAndSubscribe } from "../services/checkAndSubscribe";
+import { TCheckAndSubscribeResult, checkAndSubscribe } from "../services/checkAndSubscribe";
 import {
   TPredictionContract,
   getAllInterestingPredictionContracts,
@@ -86,14 +86,16 @@ export const providerListener = async ({
       ({ expires }) => expires < currentTs + overlapBlockCount
     );
 
-    checkAndSubscribe({
+    const renewedPredictoors:TCheckAndSubscribeResult = await checkAndSubscribe({
       predictoorContracts: renewPredictoors
         .map(({ predictorContract }) => predictorContract)
         .filter((item) => !startedTransactions.includes(item.address)),
       currentEpoch: currentEpoch * SPE,
       startedTransactions: startedTransactions,
-    }).then((renewedPredictoors) => {
-      renewedPredictoors.forEach((renewedPredictoor) => {
+    });
+
+    await renewedPredictoors.forEach((renewedPredictoor) => {
+      if(renewedPredictoor.active){
         const index = subscribedPredictoors.findIndex(
           ({ predictorContract }) =>
             predictorContract.address ===
@@ -103,7 +105,7 @@ export const providerListener = async ({
         startedTransactions = startedTransactions.filter(
           (item) => item !== renewedPredictoor.predictorContract.address
         );
-      });
+      }
     });
 
     if (currentTs - latestEpoch * SPE < SPE + PREDICTION_FETCH_EPOCHS_DELAY)
@@ -111,9 +113,9 @@ export const providerListener = async ({
     //console.log("startedTransactions", startedTransactions);
 
     latestEpoch = currentEpoch;
-    const currentPredictorContracts = subscribedPredictoors.map(
-      ({ predictorContract }) => predictorContract
-    );
+    const currentPredictorContracts = subscribedPredictoors
+    .filter(({ active }) => active)
+    .map(({ predictorContract }) => predictorContract);
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
