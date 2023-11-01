@@ -3,7 +3,7 @@ import {
   TCheckAndSubscribeArgs,
   TCheckAndSubscribeResult,
 } from "./checkAndSubscribe.types";
-import { overlapBlockCount, predictoorWallet } from "../../utils/appconstants";
+import { predictoorWallet } from "../../utils/appconstants";
 
 export const checkAndSubscribe = async ({
   predictoorContracts,
@@ -19,15 +19,18 @@ export const checkAndSubscribe = async ({
       );
 
       let expirationTs = subscription.expires.toNumber();
-      let isValid = expirationTs > currentEpoch;
+      let isValid = currentEpoch < expirationTs;
 
      if (!isValid) {
-        await predictorContract.buyAndStartSubscription(predictoorWallet);
-        const subscription = await predictorContract.getSubscriptions(
-          predictoorWallet.address
-        );
-        if(subscription) isValid = true
-        expirationTs = subscription.expires.toNumber();
+        let resp = await predictorContract.buyAndStartSubscription(predictoorWallet);
+        if(!resp) isValid = false
+        else{
+          const subscription = await predictorContract.getSubscriptions(
+            predictoorWallet.address
+          );
+          if(subscription) isValid = true
+          expirationTs = subscription.expires.toNumber();
+        }
       }
 
       return {

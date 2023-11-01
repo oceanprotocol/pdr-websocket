@@ -82,12 +82,8 @@ export const providerListener = async ({
     const currentTs = block.timestamp;
     const currentEpoch = Math.floor(currentTs / SPE);
 
-    const renewPredictoors = subscribedPredictoors.filter(
-      ({ expires }) => expires < currentTs + overlapBlockCount
-    );
-
     const renewedPredictoors:TCheckAndSubscribeResult = await checkAndSubscribe({
-      predictoorContracts: renewPredictoors
+      predictoorContracts: subscribedPredictoors
         .map(({ predictorContract }) => predictorContract)
         .filter((item) => !startedTransactions.includes(item.address)),
       currentEpoch: currentEpoch * SPE,
