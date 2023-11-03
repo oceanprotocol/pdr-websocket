@@ -22,8 +22,6 @@ import { calculatePredictionEpochs } from "../utils/utils";
 import { initializeAutorization } from "../services/initializeAuthorization";
 import { EEpochEmitterNames } from "../metadata/config";
 
-let latestEpoch = 0;
-
 type TProviderListenerArgs = {
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   contractAddresses: string[];
@@ -76,6 +74,7 @@ export const providerListener = async ({
   });
 
   let startedTransactions: Array<string> = [];
+  let latestEpoch = Math.floor(currentTs / SPE);
 
   provider.on("block", async (blockNumber) => {
     const block = await provider.getBlock(blockNumber);
