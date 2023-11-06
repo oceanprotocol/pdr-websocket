@@ -113,6 +113,8 @@ export const providerListener = async ({
     .map(({ predictorContract }) => predictorContract);
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
 
+    console.log(currentPredictorContracts.length)
+
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentTs,
       secondsPerEpoch: SPE,

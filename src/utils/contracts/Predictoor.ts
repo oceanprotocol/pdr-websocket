@@ -204,6 +204,7 @@ class Predictoor {
         formattedBaseTokenAmount
       );
     } catch (e: any) {
+      console.log('BUY SUBSCRIPTION ERROR')
       console.error(e);
       return null;
     }
@@ -281,6 +282,7 @@ class Predictoor {
       }
       return null;
     } catch (e) {
+      console.log('GET AGG PRED VAL ERROR')
       console.error(e);
       return null;
     }
