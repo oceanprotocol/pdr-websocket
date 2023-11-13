@@ -108,14 +108,13 @@ export const providerListener = async ({
     if (currentTs - latestEpoch * SPE < SPE + PREDICTION_FETCH_EPOCHS_DELAY)
       return;
     //console.log("startedTransactions", startedTransactions);
+    console.log(subscribedPredictoors.length, 'status', subscribedPredictoors[0].active)
 
     latestEpoch = currentEpoch;
     const currentPredictorContracts = subscribedPredictoors
     .filter(({ active }) => active)
     .map(({ predictorContract }) => predictorContract);
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
-
-    console.log(currentPredictorContracts.length)
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentTs,
