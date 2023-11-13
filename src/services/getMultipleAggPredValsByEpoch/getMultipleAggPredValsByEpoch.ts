@@ -25,6 +25,7 @@ export const getMultipleAggPredValsByEpoch = ({
         if (cachedValue) {
           return { ...cachedValue, contractAddress: contract.address };
         }
+        console.log(contract.address,epoch, currentTs)
         const predVal = {
           ...(await contract.getAggPredval(
             epoch,

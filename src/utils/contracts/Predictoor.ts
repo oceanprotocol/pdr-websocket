@@ -198,6 +198,7 @@ class Predictoor {
         ethers.utils.formatEther(baseTokenAmount),
         this.provider
       );
+      console.log('BUYING SUBSCRIPTION FOR ', this.address)
       return await this.buyFromFreAndOrder(
         user,
         this.exchangeId?.toString(),

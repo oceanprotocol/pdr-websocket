@@ -64,6 +64,8 @@ export const providerListener = async ({
   const SPE =
   await predictoorContracts[0]?.getSecondsPerEpoch();
 
+  console.log(predictoorContracts.length, predictoorContracts[0].address)
+
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
     currentEpoch: Math.floor(currentTs / SPE) * SPE,

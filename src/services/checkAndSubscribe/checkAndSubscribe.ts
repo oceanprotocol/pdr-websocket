@@ -20,6 +20,7 @@ export const checkAndSubscribe = async ({
 
       let expirationTs = subscription.expires.toNumber();
       let isValid = currentEpoch < expirationTs;
+      console.log(predictorContract.address, 'Subscription Left ', expirationTs-currentEpoch)
 
      if (!isValid) {
         let resp = await predictorContract.buyAndStartSubscription(predictoorWallet);
