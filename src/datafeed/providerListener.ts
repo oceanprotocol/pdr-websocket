@@ -111,10 +111,12 @@ export const providerListener = async ({
     console.log(subscribedPredictoors.length, 'status', subscribedPredictoors[0].active)
 
     latestEpoch = currentEpoch;
+    console.log('expiry date:',subscribedPredictoors[0].expires,'  current epoch',currentEpoch)
     const currentPredictorContracts = subscribedPredictoors
     .filter(({ active }) => active)
     .map(({ predictorContract }) => predictorContract);
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
+
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentTs,
