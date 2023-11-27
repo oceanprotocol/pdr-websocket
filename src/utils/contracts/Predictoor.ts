@@ -79,7 +79,7 @@ class Predictoor {
 
     const providerFeeToken = ethers.constants.AddressZero;
     const providerFeeAmount = 0;
-    const providerValidUntil = 0;
+    const providerValidUntil = Math.floor(Date.now() / 1000 + 3600);
     // Create message to sign
     const message = ethers.utils.solidityKeccak256(
       ["bytes", "address", "address", "uint256", "uint256"],
@@ -227,9 +227,9 @@ class Predictoor {
         const receipt = result.receipt;
         const confirmation = result.confirmation;
         
-        //console.log("confirmation", confirmation);
-        //console.log("result", receipt);
-        //console.log("success");
+        console.log("confirmation", confirmation);
+        console.log("result", receipt);
+        console.log("success");
         return receipt;
       } else {
         throw result;
