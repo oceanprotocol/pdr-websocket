@@ -79,7 +79,7 @@ class Predictoor {
 
     const providerFeeToken = ethers.constants.AddressZero;
     const providerFeeAmount = 0;
-    const providerValidUntil = 0;
+    const providerValidUntil = Math.floor(Date.now() / 1000 + 3600);
     // Create message to sign
     const message = ethers.utils.solidityKeccak256(
       ["bytes", "address", "address", "uint256", "uint256"],
@@ -110,6 +110,7 @@ class Predictoor {
   // Get order parameters
   async getOrderParams(user: ethers.Wallet) {
     const providerFee = await this.getCalculatedProviderFee(user);
+    console.log("providerFee", providerFee);
     return {
       consumer: user.address,
       serviceIndex: 0,
@@ -128,11 +129,16 @@ class Predictoor {
     freParams: TFreParams
   ): Promise<BigNumber> {
     const isBarge = process.env.ENVIRONMENT === "barge";
-    return isBarge
-      ? (await networkProvider.getProvider().getBlock("latest")).gasLimit
-      : this.instance
-          .connect(user)
-          .estimateGas.buyFromFreAndOrder(orderParams, freParams);
+    const latestGasLimit = (
+      await networkProvider.getProvider().getBlock("latest")
+    ).gasLimit;
+    if (isBarge) return latestGasLimit;
+
+    const gasLimitEstimate = await this.instance
+      .connect(user)
+      .estimateGas.buyFromFreAndOrder(orderParams, freParams);
+
+    return BigNumber.from(Math.max(gasLimitEstimate.mul(2).toNumber(), latestGasLimit.toNumber()));
   }
 
   // Buy from Fixed Rate Exchange (FRE) and order
@@ -140,7 +146,13 @@ class Predictoor {
     user: ethers.Wallet,
     exchangeId: string,
     baseTokenAmount: string
-  ): Promise<ethers.ContractReceipt | Error> {
+  ): Promise<
+    | {
+        receipt: ethers.ContractReceipt;
+        confirmation: ethers.providers.TransactionReceipt;
+      }
+    | Error
+  > {
     try {
       console.log("buyFromFreAndOrder");
       const orderParams = await this.getOrderParams(user);
@@ -159,17 +171,24 @@ class Predictoor {
         orderParams,
         freParams
       );
+
+      const nonce = await this.provider.getTransactionCount(user.address);
+
       // Execute transaction and wait for receipt
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
           gasLimit,
-          gasPrice,
+          gasPrice: gasPrice.mul(2),
         });
 
       const receipt = await tx.wait();
 
-      return receipt;
+      const confirmation = await this.provider.waitForTransaction(
+        receipt.transactionHash
+      );
+
+      return { confirmation, receipt };
     } catch (e: any) {
       console.error(e);
       return e;
@@ -198,11 +217,23 @@ class Predictoor {
         ethers.utils.formatEther(baseTokenAmount),
         this.provider
       );
-      return await this.buyFromFreAndOrder(
+      const result = await this.buyFromFreAndOrder(
         user,
         this.exchangeId?.toString(),
         formattedBaseTokenAmount
       );
+
+      if (!(result instanceof Error)) {
+        const receipt = result.receipt;
+        const confirmation = result.confirmation;
+        
+        console.log("confirmation", confirmation);
+        console.log("result", receipt);
+        console.log("success");
+        return receipt;
+      } else {
+        throw result;
+      }
     } catch (e: any) {
       console.error(e);
       return null;

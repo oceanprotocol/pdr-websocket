@@ -27,7 +27,7 @@ let latestEpoch = 0;
 type TProviderListenerArgs = {
   io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
   contractAddresses: string[];
-  epochEmitterName: EEpochEmitterNames
+  epochEmitterName: EEpochEmitterNames;
 };
 
 export type TProviderListenerEmitData = Array<{
@@ -63,8 +63,7 @@ export const providerListener = async ({
   const block = await provider.getBlock(currentBlock);
   const currentTs = block.timestamp;
 
-  const SPE =
-  await predictoorContracts[0]?.getSecondsPerEpoch();
+  const SPE = await predictoorContracts[0]?.getSecondsPerEpoch();
 
   const subscribedPredictoors = await checkAndSubscribe({
     predictoorContracts,
@@ -137,6 +136,6 @@ export const providerListener = async ({
     }));
 
     predValDataHolder.setFixedMessage(epochEmitterName, result);
-    io.emit('newEpoch', result);
+    io.emit("newEpoch", result);
   });
 };
