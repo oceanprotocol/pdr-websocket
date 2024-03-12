@@ -1,7 +1,5 @@
 import {
   PREDICTION_FETCH_EPOCHS_DELAY,
-  currentConfig,
-  overlapBlockCount,
   predictoorWallet,
 } from "../utils/appconstants";
 import { TCheckAndSubscribeResult, checkAndSubscribe } from "../services/checkAndSubscribe";
@@ -76,7 +74,7 @@ export const providerListener = async ({
   });
 
   let startedTransactions: Array<string> = [];
-  let latestEpoch = Math.floor(currentTs / SPE);
+  let latestEpoch = 0;
 
   provider.on("block", async (blockNumber) => {
     const block = await provider.getBlock(blockNumber);
@@ -105,7 +103,8 @@ export const providerListener = async ({
       }
     });
 
-    if (currentTs - latestEpoch * SPE < SPE + PREDICTION_FETCH_EPOCHS_DELAY)
+    console.log(currentTs - latestEpoch * SPE, SPE + PREDICTION_FETCH_EPOCHS_DELAY)
+    if (currentTs - latestEpoch * SPE < SPE + PREDICTION_FETCH_EPOCHS_DELAY && latestEpoch!=0)
       return;
     //console.log("startedTransactions", startedTransactions);
     console.log(subscribedPredictoors.length, 'status', subscribedPredictoors[0].active)
@@ -116,7 +115,9 @@ export const providerListener = async ({
     .filter(({ active }) => active)
     .map(({ predictorContract }) => predictorContract);
     const predictionEpochs = calculatePredictionEpochs(currentEpoch, SPE);
+    console.log("epoch to get agg pred val", predictionEpochs)
 
+    console.log("get agg pred vals")
 
     const aggPredVals = await getMultipleAggPredValsByEpoch({
       currentTs,

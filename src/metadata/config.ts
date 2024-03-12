@@ -62,10 +62,10 @@ export const config: TRuntimeConfig = {
     oceanTokenAddress: "0x9A677a02a1Aa03d8798F4a7be9425E5d6d919fFc",
     subgraph: process.env.DEV_GRAPHQL_URL
       ? `${process.env.DEV_GRAPHQL_URL}/subgraphs/name/oceanprotocol/ocean-subgraph`
-      : "http://172.15.0.15:8000/subgraphs/name/oceanprotocol/ocean-subgraph",
+      : "http://localhost:9000/subgraphs/name/oceanprotocol/ocean-subgraph",
     opfProvidedPredictions: {
-      "5m": ["0x3586b0ff8e98dbdcb1cb7d8620bf6cd9246a47a5"],
-      "1h": null,
+      "5m": ["0x0f997a6233d3577bed4ef0d6a145eed023668e92"],
+      "1h": ["0x3eb8e5d91747885cf05755e09d5ce7d476a673a2"],
     },
     opfOwnerAddress: "0xe02a421dfc549336d47efee85699bd0a3da7d6ff",
     tokenPredictions: [
