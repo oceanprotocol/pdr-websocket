@@ -151,7 +151,7 @@ class Predictoor {
 
       const freParams = {
         exchangeContract: fixedRateAddress,
-        id,
+        exchangeId: id,
         maxBaseTokenAmount: ethers.utils.parseEther(baseTokenAmount),
         swapMarketFee: 0,
         marketFeeAddress: ethers.constants.AddressZero,
