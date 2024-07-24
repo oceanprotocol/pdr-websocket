@@ -143,7 +143,7 @@ class Predictoor {
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       console.log("buyFromFreAndOrder");
-      const fixedRates = JSON.parse(await this.getExchanges())
+      const fixedRates = await this.getExchanges()
       const fixedRateAddress = fixedRates[0].contractAddress
       const id = fixedRates[0].id
 
@@ -217,7 +217,7 @@ class Predictoor {
     return this.instance?.startOrder();
   }
   // Get exchanges
-  getExchanges(): Promise<[string, BigNumber][]> {
+  getExchanges(): Promise<{ contractAddress: string; id: string; }[]> {
     return this.instance?.getFixedRates();
   }
   // Get stake token
