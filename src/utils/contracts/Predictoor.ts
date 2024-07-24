@@ -155,7 +155,6 @@ class Predictoor {
         swapMarketFee: 0,
         marketFeeAddress: ethers.constants.AddressZero,
       };
-      console.log(freParams)
       // Get gas price and limit
       const gasPrice = await this.provider.getGasPrice();
       const gasLimit = await this.getBuyFromFreGasLimit(
@@ -164,6 +163,7 @@ class Predictoor {
         freParams
       );
       // Execute transaction and wait for receipt
+      console.log(orderParams, freParams)
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
