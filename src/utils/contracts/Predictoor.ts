@@ -115,9 +115,9 @@ class Predictoor {
       serviceIndex: 0,
       _providerFee: providerFee,
       _consumeMarketFee: {
-        consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
-        consumeMarketFeeToken: this.details.publishMarketFeeToken,
-        consumeMarketFeeAmount: this.details.publishMarketFeeAmount,
+        consumeMarketFeeAddress: ethers.constants.AddressZero,
+        consumeMarketFeeToken: ethers.constants.AddressZero,
+        consumeMarketFeeAmount: 0,
       },
     };
   }
