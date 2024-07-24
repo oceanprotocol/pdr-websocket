@@ -144,14 +144,13 @@ class Predictoor {
     try {
       console.log("buyFromFreAndOrder");
       const fixedRates = await this.getExchanges()
-      const fixedRateAddress = fixedRates[0].contractAddress
-      const id = fixedRates[0].id
+      const [fixedRateAddress, exchangeId]: [string, BigNumber] = fixedRates[0];
 
       const orderParams = await this.getOrderParams(user);
 
       const freParams = {
         exchangeContract: fixedRateAddress,
-        exchangeId: id,
+        exchangeId: exchangeId,
         maxBaseTokenAmount: ethers.utils.parseEther(baseTokenAmount),
         swapMarketFee: 0,
         marketFeeAddress: ethers.constants.AddressZero,
@@ -217,7 +216,7 @@ class Predictoor {
     return this.instance?.startOrder();
   }
   // Get exchanges
-  getExchanges(): Promise<{ contractAddress: string; id: string; }[]> {
+  getExchanges(): Promise<[string, BigNumber][]> {
     return this.instance?.getFixedRates();
   }
   // Get stake token
