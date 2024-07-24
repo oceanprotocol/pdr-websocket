@@ -58,24 +58,12 @@ export const getAllInterestingPredictionContracts = async (
       let baseToken = '';
       let quoteToken = '';
       let interval = '';
-      item.token.nft.nftData.forEach((i: TNftDataElement) => {
-        const valueHex = i.value.slice(2);
-        const decodedValue = Buffer.from(valueHex, 'hex').toString('utf8');
-        switch (i.key) {
-            case NftKeys.MARKET:
-                market = decodedValue;
-                break;
-            case NftKeys.BASE:
-                baseToken = decodedValue;
-                break;
-            case NftKeys.QUOTE:
-                quoteToken = decodedValue;
-                break;
-            case NftKeys.INTERVAL:
-                interval = decodedValue;
-                break;
-        }
-      });
+      market = "binance"
+      let qbtks = item.token.name.split("/")
+      baseToken = qbtks[0]
+      quoteToken = qbtks[1]
+      interval = item.secondsPerEpoch == "300" ? "5m" : "1h"
+
       contracts[item.id] = {
         name: item.token.name,
         price: item.token.lastPriceValue,
@@ -88,7 +76,7 @@ export const getAllInterestingPredictionContracts = async (
         secondsPerEpoch: item.secondsPerEpoch,
         secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,
-        nftId: item.token.nft.id,
+        nftId: item.token.name,
         publishMarketFeeAddress: item.token.publishMarketFeeAddress,
         publishMarketFeeAmount: item.token.publishMarketFeeAmount,
         paymentCollector: item.token.paymentCollector,
