@@ -157,13 +157,13 @@ class Predictoor {
       };
       // Get gas price and limit
       const gasPrice = await this.provider.getGasPrice();
+      console.log(orderParams, freParams)
       const gasLimit = await this.getBuyFromFreGasLimit(
         user,
         orderParams,
         freParams
       );
       // Execute transaction and wait for receipt
-      console.log(orderParams, freParams)
       const tx = await this.instance
         .connect(user)
         .buyFromFreAndOrder(orderParams, freParams, {
