@@ -143,6 +143,7 @@ class Predictoor {
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       console.log("buyFromFreAndOrder");
+      console.log(await this.getExchanges())
       const orderParams = await this.getOrderParams(user);
 
       const freParams = {
