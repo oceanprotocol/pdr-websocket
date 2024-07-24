@@ -143,12 +143,15 @@ class Predictoor {
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       console.log("buyFromFreAndOrder");
-      console.log(await this.getExchanges())
+      const fixedRates = JSON.parse(await this.getExchanges())
+      const fixedRateAddress = fixedRates[0].contractAddress
+      const id = fixedRates[0].id
+
       const orderParams = await this.getOrderParams(user);
 
       const freParams = {
-        exchangeContract: this.FRE.address,
-        exchangeId,
+        exchangeContract: fixedRateAddress,
+        id,
         maxBaseTokenAmount: ethers.utils.parseEther(baseTokenAmount),
         swapMarketFee: 0,
         marketFeeAddress: ethers.constants.AddressZero,
