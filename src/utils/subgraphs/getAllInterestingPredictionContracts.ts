@@ -75,12 +75,13 @@ export const getAllInterestingPredictionContracts = async (
         secondsPerEpoch: item.secondsPerEpoch,
         secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,
-        nftId: item.token.nft ? item.token.nft.id : "",
+        nftId: item.token.nft ? item.token.nft.owner.id : "",
         publishMarketFeeAddress: item.token.publishMarketFeeAddress,
         publishMarketFeeAmount: item.token.publishMarketFeeAmount,
         paymentCollector: item.token.paymentCollector,
         publishMarketFeeToken: item.token.publishMarketFeeToken,
       };
+      console.log(contracts[item.id]);
     }
 
     offset += chunkSize;
