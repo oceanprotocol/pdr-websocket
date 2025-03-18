@@ -76,10 +76,10 @@ export const getAllInterestingPredictionContracts = async (
         secondsPerSubscription: item.secondsPerSubscription,
         last_submitted_epoch: 0,
         nftId: item.token.nft ? item.token.nft.owner.id : "",
-        publishMarketFeeAddress: item.token.publishMarketFeeAddress,
-        publishMarketFeeAmount: item.token.publishMarketFeeAmount,
-        paymentCollector: item.token.paymentCollector,
-        publishMarketFeeToken: item.token.publishMarketFeeToken,
+        publishMarketFeeAddress: "0x0000000000000000000000000000000000000000",
+        publishMarketFeeAmount: "0",
+        paymentCollector: "0x0000000000000000000000000000000000000000",
+        publishMarketFeeToken: "0x0000000000000000000000000000000000000000",
       };
       console.log(contracts[item.id]);
     }

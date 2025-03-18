@@ -110,6 +110,23 @@ class Predictoor {
   // Get order parameters
   async getOrderParams(user: ethers.Wallet) {
     const providerFee = await this.getCalculatedProviderFee(user);
+
+    // Validate the details object and its properties
+    if (!this.details) {
+      throw new Error("Prediction contract details are not initialized");
+    }
+
+    if (!this.details.publishMarketFeeAddress) {
+      throw new Error("publishMarketFeeAddress is null or undefined");
+    }
+
+    if (!this.details.publishMarketFeeToken) {
+      throw new Error("publishMarketFeeToken is null or undefined");
+    }
+
+    // Ensure publishMarketFeeAmount is not null
+    const publishMarketFeeAmount = this.details.publishMarketFeeAmount ?? 0;
+
     return {
       consumer: user.address,
       serviceIndex: 0,
@@ -117,7 +134,7 @@ class Predictoor {
       _consumeMarketFee: {
         consumeMarketFeeAddress: this.details.publishMarketFeeAddress,
         consumeMarketFeeToken: this.details.publishMarketFeeToken,
-        consumeMarketFeeAmount: this.details.publishMarketFeeAmount,
+        consumeMarketFeeAmount: publishMarketFeeAmount,
       },
     };
   }
@@ -143,7 +160,33 @@ class Predictoor {
   ): Promise<ethers.ContractReceipt | Error> {
     try {
       console.log("buyFromFreAndOrder");
+
+      // Check if instance is initialized
+      if (!this.instance) {
+        return new Error("Contract instance not initialized");
+      }
+
       const orderParams = await this.getOrderParams(user);
+
+      // Check if FRE is null before accessing its address
+      if (!this.FRE) {
+        return new Error("Fixed Rate Exchange not initialized");
+      }
+
+      // Ensure all addresses in the parameters are valid
+      if (!this.FRE.address) {
+        return new Error("FRE address is null or undefined");
+      }
+
+      // Validate user address
+      if (!user.address) {
+        return new Error("User wallet address is null or undefined");
+      }
+
+      // Validate exchangeId
+      if (!exchangeId) {
+        return new Error("Exchange ID is null or undefined");
+      }
 
       const freParams = {
         exchangeContract: this.FRE.address,
@@ -152,26 +195,54 @@ class Predictoor {
         swapMarketFee: 0,
         marketFeeAddress: ethers.constants.AddressZero,
       };
+
+      // Log the parameters for debugging
+      console.log("Order params:", JSON.stringify(orderParams, null, 2));
+      console.log("FRE params:", JSON.stringify(freParams, null, 2));
+
       // Get gas price and limit
       const gasPrice = await this.provider.getGasPrice();
-      const gasLimit = await this.getBuyFromFreGasLimit(
-        user,
-        orderParams,
-        freParams
-      );
+
+      // Wrap this in a try/catch to debug any issues with gas limit estimation
+      let gasLimit;
+      try {
+        gasLimit = await this.getBuyFromFreGasLimit(
+          user,
+          orderParams,
+          freParams
+        );
+      } catch (gasError) {
+        console.error("Error estimating gas limit:", gasError);
+        // Use a fallback gas limit
+        gasLimit = ethers.BigNumber.from("2000000"); // Fallback gas limit
+      }
+
       // Execute transaction and wait for receipt
-      const tx = await this.instance
-        .connect(user)
-        .buyFromFreAndOrder(orderParams, freParams, {
-          gasLimit,
-          gasPrice,
-        });
+      try {
+        const tx = await this.instance
+          .connect(user)
+          .buyFromFreAndOrder(orderParams, freParams, {
+            gasLimit,
+            gasPrice,
+          });
 
-      const receipt = await tx.wait();
-
-      return receipt;
+        const receipt = await tx.wait();
+        return receipt;
+      } catch (txError: any) {
+        // Check if this is a "transaction replaced" error
+        if (txError.code === "TRANSACTION_REPLACED") {
+          // If the replacement transaction was confirmed (not cancelled), return its receipt
+          if (!txError.cancelled && txError.replacement && txError.receipt) {
+            console.log(
+              "Transaction was replaced by another successful transaction"
+            );
+            return txError.receipt;
+          }
+        }
+        throw txError; // Re-throw if it's not a successful replacement
+      }
     } catch (e: any) {
-      console.error(e);
+      console.error("Error in buyFromFreAndOrder:", e);
       return e;
     }
   }
@@ -180,7 +251,12 @@ class Predictoor {
     user: ethers.Wallet
   ): Promise<ethers.ContractReceipt | Error | null> {
     try {
-      const dtPrice: any = await this.FRE?.getDtPrice(
+      // Check if FRE is initialized
+      if (!this.FRE) {
+        return new Error("Fixed Rate Exchange not initialized");
+      }
+
+      const dtPrice: any = await this.FRE.getDtPrice(
         this.exchangeId?.toString()
       );
 
